@@ -130,7 +130,7 @@
 - **Source:** https://distill.pub/2017/feature-visualization/
 - **Focus:** Making ML interpretability accessible to non-ML audiences (clinicians)
 
-**Reading Notes** (`docs/reading_notes/feature_visualization.md`):
+**Reading Notes** (`docs/reading_notes/week1/feature_visualization.md`):
 
 ```markdown
 # Feature Visualization - Reading Notes

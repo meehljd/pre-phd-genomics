@@ -1,46 +1,89 @@
-## TRACK C: HAO IMPLEMENTATION + STUDY DESIGN (Apr 2026 - May 2026 - 6-8 weeks)
+## TRACK C: COMPETITIVE ANALYSIS + HAO + STUDY DESIGN (Apr-Jun 2026 - 6-8 weeks)
 
-### Phase 1: HAO Multi-Agent System Implementation (Apr 2026 - 3 weeks)
+### Phase 1: Competitive Paper Deep Dive (Apr-May 2026 - 3-4 weeks)
 
-**Goal:** Build working orchestrator platform (using Microsoft HAO or custom framework)
+**Goal:** Understand exactly where DeepRare, AlphaGenome, GenoMAS succeed and fail
 
-**Reading:**
-1. **Microsoft HAO documentation** (if using that platform)
-   - Time: 2-3 hours
+**Reading (1 paper per week, deep analysis):**
 
-2. **LLM-based reasoning papers (optional if using Claude/GPT agents):**
-   - **Wei et al. 2022 Chain-of-Thought**
-   - Time: 1 hour
+1. **DeepRare (June 2025)** - Multi-agent rare disease system
+   - Time: 6-8 hours (read + reproduce key result)
+   - Focus: Multi-agent architecture, how agents coordinate, diagnostic accuracy
 
-**Hands-On (Critical for thesis):**
+2. **AlphaGenome (June 2025)** - Regulatory variant foundation model
+   - Time: 6-8 hours (read + test on your data)
+   - Focus: Non-coding variant interpretation, how it differs from your approach
+
+3. **GenoMAS (July 2025)** - Multi-agent genomic analysis
+   - Time: 6-8 hours (read + compare to DeepRare)
+   - Focus: Agent reasoning, explainability, clinical integration
+
+4. **Your choice** - Pick most relevant competitor or related work
+   - Options: Exomiser updates, PhenoLinker, MARRVEL-AI
+   - Time: 6-8 hours
+
+**Hands-On:**
 
 ```python
-# Project: Multi-Agent Diagnostic System
+# Exercise 17: Competitive reproduction (8-10 hours per paper)
+- Pick ONE paper (DeepRare or AlphaGenome)
+- Goal: Can you reproduce their core result?
+- Steps:
+  * Download their code/model (if available)
+  * Test on their benchmark dataset (if available)
+  * Test on YOUR data (5-10 variants)
+  * Document: Where does it work? Where does it fail?
+  * Comparison: Your approach vs. theirs (strengths/weaknesses)
 
-# 1. Agent implementation (10-12 hours)
-- Variant pathogenicity agent:
-  * Input: DNA sequence + variant location
-  * Output: Pathogenicity score + attention heatmap + SHAP explanation
-  
-- Gene prioritization agent:
-  * Input: Variant, patient phenotypes, background genetics
-  * Output: Top 10 genes ranked by combined score (ACMG + network propagation)
-  
-- Phenotype linking agent:
-  * Input: Gene list, patient phenotypes
-  * Output: Confidence of gene-phenotype associations + pathway explanations
-  
-- Clinical reasoning agent:
-  * Input: Patient history, phenotypes, genetics
-  * Output: Diagnostic confidence, next-step recommendations
+# Exercise 18: Competitive matrix (4-5 hours)
+- Create comparison spreadsheet:
+  * Methods: DeepRare, AlphaGenome, GenoMAS, Exomiser, Yours
+  * Metrics: Diagnostic yield, interpretability, multi-ancestry, prospective validation
+  * Gaps: What does no one do well?
+- Identify: Your unique value proposition
+```
 
-# 2. Orchestrator implementation (8-10 hours)
+**Output:**
+- Competitive analysis documents (3-4 papers, 2000 words each)
+- Reproduction notebook for 1 competitor
+- Competitive comparison matrix (Excel + summary document)
+
+---
+
+### Phase 2: HAO Multi-Agent System Design (May 2026 - 2-3 weeks)
+
+**Goal:** Design and implement multi-agent diagnostic system using Microsoft Healthcare Agent Orchestrator
+
+**Reading:**
+1. **Microsoft HAO documentation** (online)
+   - Time: 2-3 hours
+
+2. **Multi-agent systems papers:**
+   - **Wu et al. 2023** - "AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation" (Microsoft)
+   - Time: 1.5 hours
+
+**Hands-On:**
+
+```python
+# Exercise 19: Agent design (4-6 hours)
+- Define 5 agents for rare disease diagnosis:
+  1. Variant annotation agent (ACMG classification)
+  2. Phenotype matching agent (HPO-based)
+  3. Network analysis agent (PPI propagation)
+  4. Literature search agent (PubMed API)
+  5. Diagnostic reasoning agent (coordinator)
+- For each agent:
+  * Input/output specification
+  * Tools/APIs needed
+  * Confidence scoring method
+
+# Exercise 20: HAO orchestrator implementation (8-10 hours)
 - Coordinate agents in sequence or parallel
 - Aggregate confidence scores
 - Generate reasoning chain (interpretable output for clinician)
 - Error handling & fallback strategies
 
-# 3. End-to-end testing (4-5 hours)
+# Exercise 21: End-to-end testing (4-5 hours)
 - Simulate 10 patient scenarios (diverse rare diseases)
 - For each: Does system reach correct diagnosis?
 - Document reasoning chain transparency
@@ -49,12 +92,12 @@
 
 **Output:**
 - Fully working multi-agent system
-- Reasoningchain documentation for 10 test cases
+- Reasoning chain documentation for 10 test cases
 - System architecture document (technical + clinical motivation)
 
 ---
 
-### Phase 2: Prospective Study Design & IRB Preparation (May 2026 - 2-3 weeks)
+### Phase 3: Prospective Study Design & IRB Preparation (Jun 2026 - 2-3 weeks)
 
 **Goal:** Design realistic prospective validation; prepare for regulatory review
 
@@ -74,7 +117,7 @@
 # - Outcomes (diagnostic yield, time-to-diagnosis, health outcomes)
 # - Timeline (enrollment phases)
 # - Data collection forms
-# - Statistical analysis plan
+# - Statistical analysis plan (include ancestry-stratified analysis)
 # - Regulatory/IRB considerations
 
 # Document 2: IRB Submission Preparation (3-5 pages)
@@ -89,28 +132,19 @@
 # - Current patient population in Undiagnosed Diseases Program?
 # - What's feasible in prospective study?
 # - Partnership opportunities (multi-site)?
+# - Ancestry diversity in Mayo patient population?
 ```
 
 **Output:**
 - Complete prospective study protocol draft (ready for IRB)
 - Enrollment timeline projections
-- Statistical power analysis
+- Statistical power analysis (with ancestry stratification)
 - Meeting notes with Eric Klee on feasibility
 
 ---
 
-### Track C Integration: Weekly Competitive Paper Reading (Ongoing Jan-Sep 2026)
-
-**Format:** 1 competitive paper per week, lightweight tracking
-
-| Month   | Paper                       | Focus                    |
-| ------- | --------------------------- | ------------------------ |
-| Jan     | DeepRare                    | Multi-agent architecture |
-| Jan-Feb | AlphaGenome                 | Regulatory variants      |
-| Feb     | GenoMAS                     | Multi-agent reasoning    |
-| Feb-Mar | Follow-up papers from above | Refinements, benchmarks  |
-| Mar     | Exomiser recent updates     | Baseline comparison      |
-| Mar-Apr | PhenoLinker / similar       | Phenotype prediction     |
-| Apr-May | IMPPROVE deep dive          | Your direct comparison   |
-| May-Jun | Other competitive papers    | Catch-up reading         |
-| Jun-Aug | Your deep-dive topics       | Specialized knowledge    |
+### Track C Summary (By Jun 30, 2026):
+- ✅ Deep understanding of competitive landscape
+- ✅ Working multi-agent HAO system
+- ✅ Prospective study protocol ready for IRB
+- **Time investment: ~40-50 hours**

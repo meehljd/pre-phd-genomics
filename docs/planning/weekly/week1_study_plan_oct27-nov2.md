@@ -1,5 +1,15 @@
-# Week 1 Study Plan: Oct 27 - Nov 2, 2025
-## Track A Phase 1 Kickoff: Attention Visualization on Your Models
+# Week 1 Study Plan (UPDATED): Oct 27 - Nov 2, 2025
+## Track A Phase 1 Kickoff: Attention Visualization on ESM2
+
+---
+
+## REVISION NOTES
+
+**Changes from original Week 1 plan:**
+- **ESM2 replaces Evo2** for Track A interpretability learning due to Evo2 usability issues
+- ESM2 (protein foundation model) teaches attention mechanics equally well
+- Genomic foundation model selection (Enformer, Nucleotide Transformer, etc.) deferred to Track B Phase 2 (Jan 2026)
+- All exercises and outputs adapted for protein sequences instead of genomic sequences
 
 ---
 
@@ -32,9 +42,11 @@
    # Create directories:
    # 01_interpretability/
    # 02_genomics_domain/
-   # 03_integrated_projects/
-   # 04_competitive_analysis/
-   # 05_clinical_context/
+   # 03_genomic_models/  # NEW: for genomic model evaluation (Track B Phase 2)
+   # 04_network_medicine/
+   # 05_integrated_projects/
+   # 06_competitive_analysis/
+   # 07_clinical_context/
    # docs/
    # README.md (overview of study plan)
    ```
@@ -47,15 +59,15 @@
    
    # Install core packages
    pip install torch transformers numpy pandas jupyter matplotlib seaborn
-   pip install scikit-learn shap lime
+   pip install scikit-learn shap lime fair-esm  # fair-esm for ESM2
    
    # Create requirements.txt
    pip freeze > requirements.txt
    ```
 
 3. **ESM2 model check (40 min)**
-   - Verify you can load ESM2 from HuggingFace
-   - Test on toy DNA sequence (100bp)
+   - Verify you can load ESM2 from HuggingFace or fair-esm
+   - Test on toy protein sequence (100 amino acids)
    - Confirm GPU availability
    - Document setup in `docs/environment_setup.md`
 
@@ -74,11 +86,12 @@
      - How do they visualize attention across layers?
      - What biological patterns do they find?
      - Why is attention useful for rare disease variants?
+   - **Adaptation note:** Enformer is genomic (DNA), but attention visualization principles transfer to ESM2 (proteins)
 
 2. **Create analysis plan doc (30 min)**
    - Open `docs/week1_analysis_plan.md`
    - Document: For ESM2, what biological signals should we expect?
-   - Example: Attention to TFBS sites? CpG islands? Splice sites?
+   - Example: Attention to active sites? Binding domains? Secondary structure boundaries?
    - For encoder-decoder bottleneck: What should it compress?
 
 **Output:** Reading notes + analysis plan document
@@ -95,10 +108,10 @@
    - Save to `docs/reading_notes/feature_visualization.md`
 
 2. **Create first Jupyter notebook (1 hour)**
-   - File: `01_interpretability/00_ESM2_attention_setup.ipynb`
+   - File: `01_interpretability/00_esm2_attention_setup.ipynb`
    - Cells:
-     * Load ESM2 model
-     * Test on 3 toy DNA sequences (100bp each)
+     * Load ESM2 model (ESM-2-650M or smaller for testing)
+     * Test on 3 toy protein sequences (50-100 amino acids each)
      * Extract attention from last layer, last head
      * Visualize as simple heatmap (position × position attention)
      * Don't worry about biological interpretation yet—just get it working
@@ -127,13 +140,13 @@
      ```
 
 2. **Test on real variant data (45 min)**
-   - Pick 1 known pathogenic variant (e.g., BRCA1 p.R1699W)
-   - Get genomic sequence context (500bp window around variant)
+   - Pick 1 known pathogenic variant (e.g., HBB E6V - sickle cell)
+   - Get protein sequence context (wild-type + mutant)
    - Run through ESM2, extract attention
    - Save output to `01_interpretability/data/variant1_attention.pkl`
    - Document: Did extraction work? What does attention look like?
 
-**Output:** Working attention extraction on real variants
+**Output:** Working attention extraction on real protein variants
 
 ---
 
@@ -151,6 +164,7 @@
      * What was harder than expected?
      * ESM2 attention extraction: Did it reveal anything interesting?
      * Plans for weekend deep dive
+     * Note on genomic model decision: Will evaluate options in Jan 2026
    - Commit all code to GitHub
 
 **Output:** Clean, documented code ready for weekend work
@@ -163,9 +177,9 @@
 
 **What to do:**
 1. **Systematic attention analysis on ESM2 (1.5 hours)**
-   - Create: `01_interpretability/01_ESM2_attention_analysis.ipynb`
-   - Load 10 variants: 5 pathogenic, 5 benign
-   - Extract attention from each layer (4-6 layers typically)
+   - Create: `01_interpretability/01_esm2_attention_analysis.ipynb`
+   - Load 10 variants: 5 pathogenic, 5 benign (from `variant_dataset.py`)
+   - Extract attention from each layer (typically 33 layers for ESM-2-650M)
    - Questions to answer:
      * Do pathogenic variants have different attention patterns than benign?
      * Which positions get highest attention? Do they align with known functional domains?
@@ -191,7 +205,7 @@
    - Cells:
      * Load model
      * For 3 test inputs, extract:
-       - Encoder attention (to genomic sequence)
+       - Encoder attention (to sequence)
        - Bottleneck representation (what dimensions? How to visualize?)
        - Decoder attention
      * Key question: **What does bottleneck learn?** 
@@ -208,45 +222,43 @@
 **What to do:**
 
 **Hour 1: Comparison analysis (1 hour)**
-- Create: `01_interpretability/03_ESM2_vs_encoder_decoder_comparison.ipynb`
+- Create: `01_interpretability/03_esm2_vs_encoder_decoder_comparison.ipynb`
 - Load outputs from Saturday work
 - For 5 same variants, visualize:
   * ESM2 attention (last layer)
   * Encoder-decoder encoder attention
   * Side-by-side comparison
 - Initial observations: Where do they agree/disagree?
+- Document hypotheses about what each model learns
 
-**30 min: Documentation + cleanup**
-- Write: `01_interpretability/WEEK1_SUMMARY.md`
-  * What we learned about ESM2
-  * What we learned about encoder-decoder
-  * Open questions for Week 2
-- Clean up notebook code (remove debug cells, add markdown)
-- Commit everything to GitHub
+**Hour 2: Week summary + planning (1-1.5 hours)**
+- Create: `01_interpretability/WEEK1_SUMMARY.md`
+- Document:
+  * What was accomplished
+  * Key insights from ESM2 attention
+  * Bottleneck analysis preliminary findings
+  * Challenges encountered
+  * How ESM2 work prepares for genomic model selection (Jan 2026)
+- Create: `docs/week2_plan.md`
+  * Next steps: SHAP analysis? More variants?
+  * Reading plan for next week
+- Commit and push all work
 
-**30 min: Plan Week 2**
-- Sketch: `docs/week2_plan.md`
-  * Continue encoder-decoder analysis (deeper)
-  * Begin SHAP analysis (Track A Phase 2)
-  * Start ACMG reading (Track B Phase 1)
-  * First competitive paper read (optional if time)
-
-**Output:** Comparison analysis + clean repo + Week 2 plan
+**Output:** Week 1 complete, documented, ready for Week 2
 
 ---
 
-## OPTIONAL EVENING READING (Flexible)
+## OPTIONAL EVENING READING (If you have energy)
 
-If you have evening time, pick one:
+**Pick ONE:**
 
-**Option A (Technical):**
-- Start skimming DeepRare paper (arXiv June 25, 2025)
-- Goal: Understand their multi-agent architecture
-- Take notes in `docs/competitive_papers/deeprare_notes.md`
-- Not required, but getting ahead is nice
+**Option A (Competitive landscape):**
+- Read DeepRare abstract + introduction (15-20 min)
+- Just get familiar with their approach
+- Save to `06_competitive_analysis/deeprare_initial_notes.md`
 
-**Option B (Domain):**
-- Start reading Richards et al. 2015 (ACMG classification)
+**Option B (Genomics fundamentals):**
+- Read Richards et al. 2015 (ACMG classification)
 - Focus: First 5 pages + ACMG classification table
 - Understand the 7 categories (PVS, PS, PM, PP, BS, BP)
 - Take notes in `docs/reading_notes/acmg_intro.md`
@@ -259,19 +271,19 @@ If you have evening time, pick one:
 
 ## GITHUB COMMIT CHECKLIST (By Sunday Evening)
 
-- [ ] Repo structure created (all directories)
+- [ ] Repo structure created (all directories including new `03_genomic_models/`)
 - [ ] `README.md` with study plan overview
-- [ ] `requirements.txt` with dependencies
+- [ ] `requirements.txt` with dependencies (including fair-esm)
 - [ ] `docs/environment_setup.md` (environment instructions)
 - [ ] `docs/reading_notes/enformer_attention.md` (Enformer notes)
 - [ ] `docs/reading_notes/feature_visualization.md` (Olah notes)
-- [ ] `docs/week1_analysis_plan.md` (analysis plan)
-- [ ] `docs/week1_reflection.md` (reflections)
+- [ ] `docs/week1_analysis_plan.md` (analysis plan for ESM2)
+- [ ] `docs/week1_reflection.md` (reflections + note on genomic model decision)
 - [ ] `01_interpretability/utils.py` (utility functions)
-- [ ] `01_interpretability/00_ESM2_attention_setup.ipynb` (setup)
-- [ ] `01_interpretability/01_ESM2_attention_analysis.ipynb` (ESM2 analysis on 10 variants)
+- [ ] `01_interpretability/00_esm2_attention_setup.ipynb` (setup)
+- [ ] `01_interpretability/01_esm2_attention_analysis.ipynb` (ESM2 analysis on 10 variants)
 - [ ] `01_interpretability/02_encoder_decoder_exploration.ipynb` (encoder-decoder exploration)
-- [ ] `01_interpretability/03_ESM2_vs_encoder_decoder_comparison.ipynb` (comparison)
+- [ ] `01_interpretability/03_esm2_vs_encoder_decoder_comparison.ipynb` (comparison)
 - [ ] `01_interpretability/WEEK1_SUMMARY.md` (week summary)
 - [ ] `docs/week2_plan.md` (next week plan)
 
@@ -280,7 +292,7 @@ If you have evening time, pick one:
 ## SUCCESS CRITERIA FOR WEEK 1
 
 **Hard criteria (must have):**
-- [ ] ESM2 attention extraction working (can extract from any sequence)
+- [ ] ESM2 attention extraction working (can extract from any protein sequence)
 - [ ] Encoder-decoder loaded and tested
 - [ ] 10 variants analyzed with ESM2
 - [ ] GitHub repo clean and organized
@@ -302,7 +314,7 @@ If you have evening time, pick one:
 
 3. **Notebook hygiene**: As you build, add markdown cells explaining logic. By end of week, each notebook should be readable by someone else (or you in 3 months).
 
-4. **Ask for help early**: If ESM2 attention extraction doesn't work by Wednesday afternoon, ask (PyTorch forum, GitHub issues, etc.). Don't waste 3 days debugging.
+4. **Ask for help early**: If ESM2 attention extraction doesn't work by Wednesday afternoon, ask (PyTorch forum, GitHub issues, HuggingFace forums). Don't waste 3 days debugging.
 
 5. **Backup**: Push to GitHub at end of each day. Cloud backup is your friend.
 
@@ -311,8 +323,9 @@ If you have evening time, pick one:
 ## If You Get Ahead / Behind
 
 **Ahead (all tasks done by Friday):**
-- Jump to SHAP analysis (early start on Phase 2)
+- Jump to SHAP analysis (early start on Track A Phase 2)
 - Or read competitive paper
+- Or start exploring genomic model options (Enformer documentation, NT papers)
 
 **Behind (stuck on encoder-decoder Wed):**
 - Skip optional encoder-decoder work Friday, focus on ESM2 completion
@@ -321,6 +334,26 @@ If you have evening time, pick one:
 
 ---
 
-**Week 1 is foundation-laying. You're setting up repo structure, getting comfortable with your models, and reading just enough theory. By Sunday, you'll have clean infrastructure + first real analysis outputs. That's a win.**
+## Looking Ahead: Genomic Model Selection (Jan 2026)
 
-Ready to launch Monday morning?
+**Week 1 uses ESM2 (proteins) for learning interpretability fundamentals.** Your thesis requires genomic-level models for variant interpretation. In January 2026 (Track B Phase 2), you'll evaluate options:
+
+**Candidates:**
+- Enformer (DeepMind) - 100kb context, strong on regulatory elements
+- Nucleotide Transformer (InstaDeep) - Up to 1000bp, general purpose
+- Hyena-DNA - 1M context, efficient
+- DNABERT-2, Genomic-FM, others
+
+**Decision factors:**
+- Usability (installation, documentation)
+- Performance (inference time, accuracy on your variants)
+- Interpretability (can you extract attention like ESM2?)
+- Integration with your thesis workflow
+
+**For now:** Focus on ESM2. Attention visualization skills transfer directly to genomic models. By Jan 2026, you'll be ready to evaluate and choose the best genomic foundation model for your thesis.
+
+---
+
+**Week 1 is foundation-laying. Take it seriously but don't stress. Forward progress > perfection.**
+
+Good luck! 🧬

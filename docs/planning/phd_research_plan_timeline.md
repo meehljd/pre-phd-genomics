@@ -7,7 +7,7 @@
 
 ### A. Strategic Focus: Prospective Clinical Validation
 
-The centerpiece of this thesis is establishing the **first prospectively validated AI agent system for rare disease diagnosis** with measured health outcomes. Current competitive landscape relies exclusively on retrospective validationâ€”this prospective approach creates a significant differentiator from DeepRare, AlphaGenome, AI-MARRVEL, and other methods validated on historical datasets.
+The centerpiece of this thesis is establishing the **first prospectively validated AI agent system for rare disease diagnosis** with measured health outcomes. Current competitive landscape relies exclusively on retrospective validation. this prospective approach creates a significant differentiator from DeepRare, AlphaGenome, AI-MARRVEL, and other methods validated on historical datasets.
 
 **Key Advantages:**
 - Retrospective validation overestimates real-world performance (test data from same distribution as training)

@@ -4,6 +4,8 @@
 
 **Goal:** Extract + visualize attention patterns; understand what your bottleneck learns
 
+**Note on Genomic Foundation Models:** Original plan used Evo2, but due to usability issues, we're using ESM2 (protein-level) for interpretability learning in Track A. Genomic model selection (Enformer, Nucleotide Transformer, or alternatives) will be decided in Track B Phase 2 based on comparative evaluation.
+
 **Minimal reading (you know transformers):**
 1. **Avsec et al. 2021 (Enformer) Sections 3-4 only** - 1-2 hours (refresher on bio-focused attention)
 2. **Olah et al. 2017 "Feature Visualization" blog** - 1 hour (making attention interpretable to non-ML)
@@ -11,18 +13,18 @@
 **Hands-On (Core work):**
 
 ```python
-# Project: Attention Visualization Comparison
+# Project: Attention Visualization on Protein Models (ESM2)
 
 # 1. ESM2 attention extraction (3-4 hours)
-- Load ESM2 model on HuggingFace
-- For 10 pathogenic variants: 500bp genomic window
+- Load ESM2 model from HuggingFace
+- For 10 variants (5 pathogenic, 5 benign): protein sequence window
 - Extract attention matrices from all layers
 - Aggregate across heads: attention_scores[layer][position_i][position_j]
-- Visualize: Heatmap showing which positions attend to regulatory regions?
-- Validate: Compare to known TFBS sites, CpG islands
+- Visualize: Heatmap showing which positions attend to functional domains?
+- Validate: Compare to known active sites, binding domains, structural features
 
 # 2. Your dual-llama encoder-decoder (4-5 hours)
-- Encoder: DNA sequence attention patterns
+- Encoder: Sequence attention patterns
 - Decoder: Cross-attention to bottleneck embedding
 - Key analysis: What does the bottleneck compress?
   - Does it capture protein folding signals?
@@ -36,7 +38,7 @@
 ```
 
 **Output:**
-- Jupyter notebook: "Attention Analysis in Genomic Foundation Models"
+- Jupyter notebook: "Attention Analysis in Protein Foundation Models (ESM2)"
 - 10-12 publication-quality heatmaps
 - Document: "Bottleneck Architecture Analysis" (500 words)
 
@@ -59,7 +61,7 @@
 - Model: Your encoder-decoder predicting pathogenic/benign
 - Dataset: 100 variants (50 pathogenic ClinVar, 50 benign gnomAD)
 - SHAP analysis per variant:
-  - Which nucleotide positions drive pathogenicity score?
+  - Which amino acid positions drive pathogenicity score?
   - Do top-ranked positions align with known functional domains?
   - SHAP visualization: force plots + bar plots
 - Validation: Compare to known pathogenic regions in literature

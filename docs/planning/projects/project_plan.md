@@ -2,7 +2,7 @@
 
 ### Project 1: Variant Effect Prediction System (Nov-Jan 2026)
 - **Combines:** Your encoder-decoder + attention maps + SHAP
-- **Input:** Variant (DNA sequence)
+- **Input:** Variant (protein or genomic sequence)
 - **Output:** Pathogenicity score + attention heatmap + SHAP explanation
 - **Deliverable:** Reproducible notebook, GitHub repo
 
@@ -13,17 +13,19 @@
 - **Input:** Patient phenotypes + genome
 - **Output:** Top 10 diagnostic candidates with confidence
 - **Test:** 5 published rare disease cases
+- **Ancestry evaluation:** Stratified validation by population
 - **Deliverable:** Full pipeline code + validation report
 
 ---
 
-### Project 3: Patient-Scale Heterogeneous Graph Networks for Diagnosis (Jan-Apr 2026) **[MAJOR - NEW]**
+### Project 3: Patient-Scale Heterogeneous Graph Networks for Diagnosis (Jan-Apr 2026) **[MAJOR]**
 - **Novel approach:** Treat each patient as a heterogeneous multigraph (PPI, transcriptional regulation, metabolic pathways, co-expression)
 - **Core method:** Heterogeneous GNN (R-GCN or HAN) to learn patient-level embeddings
 - **Task:** Graph classification for diagnostic prediction (rare disease category) + phenotype prediction
 - **Comparison:** Heterogeneous GNN vs. network propagation vs. ACMG alone vs. simple GNN
 - **Interpretability:** Attention extraction to identify disease-driving subgraph per patient
 - **Validation:** Edge-type ablation, mechanistic case studies, phenotype-network correlation analysis
+- **Ancestry consideration:** Include ancestry as node/graph feature; evaluate fairness metrics
 - **Deliverable:** Complete GNN pipeline (training + evaluation + interpretation), case studies, competitive positioning document
 - **Publication angle:** "Network medicine insights via heterogeneous graph embeddings captures phenotypic pleiotropy"
 
@@ -41,4 +43,5 @@
 ### Project 5: Competitive Paper Reproduction (Mar-Apr 2026)
 - **Pick:** DeepRare OR AlphaGenome (choose one that excites you)
 - **Goal:** Can you reproduce their results?
-- **Output:** Reproduction report + comparison to your approach
+- **Comparison:** Your approach vs. theirs
+- **Deliverable:** Reproduction notebook + comparative analysis document

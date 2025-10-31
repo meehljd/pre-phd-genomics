@@ -271,17 +271,17 @@
 
 ## GITHUB COMMIT CHECKLIST (By Sunday Evening)
 
-- [ ] Repo structure created (all directories including new `03_genomic_models/`)
-- [ ] `README.md` with study plan overview
-- [ ] `requirements.txt` with dependencies (including fair-esm)
-- [ ] `docs/environment_setup.md` (environment instructions)
-- [ ] `docs/reading_notes/enformer_attention.md` (Enformer notes)
-- [ ] `docs/reading_notes/feature_visualization.md` (Olah notes)
-- [ ] `docs/week1_analysis_plan.md` (analysis plan for ESM2)
+- [x] Repo structure created (all directories including new `03_genomic_models/`)
+- [x] `README.md` with study plan overview
+- [x] `requirements.txt` with dependencies (including fair-esm)
+- [x] `docs/environment_setup.md` (environment instructions)
+- [x] `docs/reading_notes/enformer_attention.md` (Enformer notes)
+- [x] `docs/reading_notes/feature_visualization.md` (Olah notes)
+- [x] `docs/week1_analysis_plan.md` (analysis plan for ESM2)
 - [ ] `docs/week1_reflection.md` (reflections + note on genomic model decision)
-- [ ] `01_interpretability/utils.py` (utility functions)
-- [ ] `01_interpretability/00_esm2_attention_setup.ipynb` (setup)
-- [ ] `01_interpretability/01_esm2_attention_analysis.ipynb` (ESM2 analysis on 10 variants)
+- [x] `01_interpretability/utils.py` (utility functions)
+- [x] `01_interpretability/00_esm2_attention_setup.ipynb` (setup)
+- [x] `01_interpretability/01_esm2_attention_analysis.ipynb` (ESM2 analysis on 10 variants)
 - [ ] `01_interpretability/02_encoder_decoder_exploration.ipynb` (encoder-decoder exploration)
 - [ ] `01_interpretability/03_esm2_vs_encoder_decoder_comparison.ipynb` (comparison)
 - [ ] `01_interpretability/WEEK1_SUMMARY.md` (week summary)

@@ -23,6 +23,7 @@ References:
 Note: For plotting and visualization, use the functions in plot_utils.py.
 """
 
+
 from typing import Optional
 import torch
 import numpy as np
@@ -79,7 +80,9 @@ def extract_attention(
         return np.stack(all_layers, axis=0)
 
 
-def aggregate_heads(attention_tensor: torch.Tensor, method: str = "mean") -> np.ndarray:
+def aggregate_heads(
+    attention_tensor: torch.Tensor, method: str = "mean"
+) -> np.ndarray:
     """
     Aggregate attention across multiple heads.
 
@@ -237,7 +240,8 @@ def analyze_variant_attention_changes(
         "variant_pos": variant_pos,
         "variant_type": variant_type,
         "shape_mismatch": False,
-        "attn_from_variant_change": attn_from_var_mut.sum() - attn_from_var_wt.sum(),
+        "attn_from_variant_change": attn_from_var_mut.sum()
+        - attn_from_var_wt.sum(),
         "attn_to_variant_change": attn_to_var_mut.sum() - attn_to_var_wt.sum(),
         "regional_attention_change": regional_mut - regional_wt,
         "max_increase_pos": np.argmax(mut_attn - wt_attn),
@@ -264,7 +268,9 @@ def analyze_layer_wise_changes(
     """
     layer_changes = []
 
-    for i, (wt_layer, mut_layer) in enumerate(zip(wt_all_layers, mut_all_layers)):
+    for i, (wt_layer, mut_layer) in enumerate(
+        zip(wt_all_layers, mut_all_layers)
+    ):
         diff = mut_layer - wt_layer
         layer_changes.append(
             {
@@ -337,9 +343,12 @@ def find_most_different_heads(
     """
     head_diffs = []
     for head_idx in range(wt_attn_per_head.shape[0]):
-        diff = np.abs(mut_attn_per_head[head_idx] - wt_attn_per_head[head_idx]).mean()
+        diff = np.abs(
+            mut_attn_per_head[head_idx] - wt_attn_per_head[head_idx]
+        ).mean()
         head_diffs.append((head_idx, diff))
 
     # Sort by difference
     head_diffs.sort(key=lambda x: x[1], reverse=True)
     return head_diffs[:top_k]
+

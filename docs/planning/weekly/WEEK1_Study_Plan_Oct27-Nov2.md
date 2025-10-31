@@ -5,7 +5,7 @@
 
 ## OVERVIEW FOR WEEK 1
 
-**Goal:** Set up infrastructure + read foundational papers + begin Evo2 attention extraction
+**Goal:** Set up infrastructure + read foundational papers + begin ESM2 attention extraction
 
 **Time budget:**
 - Weekday mornings (Mon-Fri): 1.5 hrs each = 7.5 hrs total
@@ -15,7 +15,7 @@
 
 **Deliverable by Sunday:** 
 - GitHub repo initialized with clean structure
-- Evo2 model loaded and tested
+- ESM2 model loaded and tested
 - Attention extraction pipeline started (not complete, but framework in place)
 - Reading notes on Enformer attention + Olah feature viz
 
@@ -53,13 +53,13 @@
    pip freeze > requirements.txt
    ```
 
-3. **Evo2 model check (40 min)**
-   - Verify you can load Evo2 from HuggingFace
+3. **ESM2 model check (40 min)**
+   - Verify you can load ESM2 from HuggingFace
    - Test on toy DNA sequence (100bp)
    - Confirm GPU availability
    - Document setup in `docs/environment_setup.md`
 
-**Output:** GitHub repo live, environment ready, Evo2 loads
+**Output:** GitHub repo live, environment ready, ESM2 loads
 
 ---
 
@@ -77,7 +77,7 @@
 
 2. **Create analysis plan doc (30 min)**
    - Open `docs/week1_analysis_plan.md`
-   - Document: For Evo2, what biological signals should we expect?
+   - Document: For ESM2, what biological signals should we expect?
    - Example: Attention to TFBS sites? CpG islands? Splice sites?
    - For encoder-decoder bottleneck: What should it compress?
 
@@ -95,23 +95,23 @@
    - Save to `docs/reading_notes/feature_visualization.md`
 
 2. **Create first Jupyter notebook (1 hour)**
-   - File: `01_interpretability/00_evo2_attention_setup.ipynb`
+   - File: `01_interpretability/00_ESM2_attention_setup.ipynb`
    - Cells:
-     * Load Evo2 model
+     * Load ESM2 model
      * Test on 3 toy DNA sequences (100bp each)
      * Extract attention from last layer, last head
      * Visualize as simple heatmap (position × position attention)
      * Don't worry about biological interpretation yet—just get it working
    - Save to repo
 
-**Output:** Setup notebook with basic attention extraction on Evo2
+**Output:** Setup notebook with basic attention extraction on ESM2
 
 ---
 
 ### Thursday Oct 30 (1.5 hours) - Continuing Setup
 
 **What to do:**
-1. **Debug + fix Evo2 attention extraction (45 min)**
+1. **Debug + fix ESM2 attention extraction (45 min)**
    - Run notebook from Wed, fix any issues
    - Can you extract attention matrices from multiple layers?
    - Can you aggregate across heads?
@@ -129,7 +129,7 @@
 2. **Test on real variant data (45 min)**
    - Pick 1 known pathogenic variant (e.g., BRCA1 p.R1699W)
    - Get genomic sequence context (500bp window around variant)
-   - Run through Evo2, extract attention
+   - Run through ESM2, extract attention
    - Save output to `01_interpretability/data/variant1_attention.pkl`
    - Document: Did extraction work? What does attention look like?
 
@@ -149,7 +149,7 @@
    - Document in `docs/week1_reflection.md`:
      * What worked well this week?
      * What was harder than expected?
-     * Evo2 attention extraction: Did it reveal anything interesting?
+     * ESM2 attention extraction: Did it reveal anything interesting?
      * Plans for weekend deep dive
    - Commit all code to GitHub
 
@@ -159,11 +159,11 @@
 
 ## WEEKEND
 
-### Saturday Nov 1 - Morning Block 1 (1.5 hours) - Deep Evo2 Analysis
+### Saturday Nov 1 - Morning Block 1 (1.5 hours) - Deep ESM2 Analysis
 
 **What to do:**
-1. **Systematic attention analysis on Evo2 (1.5 hours)**
-   - Create: `01_interpretability/01_evo2_attention_analysis.ipynb`
+1. **Systematic attention analysis on ESM2 (1.5 hours)**
+   - Create: `01_interpretability/01_ESM2_attention_analysis.ipynb`
    - Load 10 variants: 5 pathogenic, 5 benign
    - Extract attention from each layer (4-6 layers typically)
    - Questions to answer:
@@ -173,7 +173,7 @@
    - Visualize: Heatmaps + summary statistics
    - Save attention data and plots to outputs directory
 
-**Output:** Evo2 attention analysis on 10 variants
+**Output:** ESM2 attention analysis on 10 variants
 
 ---
 
@@ -208,17 +208,17 @@
 **What to do:**
 
 **Hour 1: Comparison analysis (1 hour)**
-- Create: `01_interpretability/03_evo2_vs_encoder_decoder_comparison.ipynb`
+- Create: `01_interpretability/03_ESM2_vs_encoder_decoder_comparison.ipynb`
 - Load outputs from Saturday work
 - For 5 same variants, visualize:
-  * Evo2 attention (last layer)
+  * ESM2 attention (last layer)
   * Encoder-decoder encoder attention
   * Side-by-side comparison
 - Initial observations: Where do they agree/disagree?
 
 **30 min: Documentation + cleanup**
 - Write: `01_interpretability/WEEK1_SUMMARY.md`
-  * What we learned about Evo2
+  * What we learned about ESM2
   * What we learned about encoder-decoder
   * Open questions for Week 2
 - Clean up notebook code (remove debug cells, add markdown)
@@ -268,10 +268,10 @@ If you have evening time, pick one:
 - [ ] `docs/week1_analysis_plan.md` (analysis plan)
 - [ ] `docs/week1_reflection.md` (reflections)
 - [ ] `01_interpretability/utils.py` (utility functions)
-- [ ] `01_interpretability/00_evo2_attention_setup.ipynb` (setup)
-- [ ] `01_interpretability/01_evo2_attention_analysis.ipynb` (Evo2 analysis on 10 variants)
+- [ ] `01_interpretability/00_ESM2_attention_setup.ipynb` (setup)
+- [ ] `01_interpretability/01_ESM2_attention_analysis.ipynb` (ESM2 analysis on 10 variants)
 - [ ] `01_interpretability/02_encoder_decoder_exploration.ipynb` (encoder-decoder exploration)
-- [ ] `01_interpretability/03_evo2_vs_encoder_decoder_comparison.ipynb` (comparison)
+- [ ] `01_interpretability/03_ESM2_vs_encoder_decoder_comparison.ipynb` (comparison)
 - [ ] `01_interpretability/WEEK1_SUMMARY.md` (week summary)
 - [ ] `docs/week2_plan.md` (next week plan)
 
@@ -280,14 +280,14 @@ If you have evening time, pick one:
 ## SUCCESS CRITERIA FOR WEEK 1
 
 **Hard criteria (must have):**
-- [ ] Evo2 attention extraction working (can extract from any sequence)
+- [ ] ESM2 attention extraction working (can extract from any sequence)
 - [ ] Encoder-decoder loaded and tested
-- [ ] 10 variants analyzed with Evo2
+- [ ] 10 variants analyzed with ESM2
 - [ ] GitHub repo clean and organized
 
 **Soft criteria (nice to have):**
 - [ ] Initial hypothesis about bottleneck function
-- [ ] Comparison between Evo2 and encoder-decoder visualized
+- [ ] Comparison between ESM2 and encoder-decoder visualized
 - [ ] Started evening reading on DeepRare or ACMG
 
 **If all hard criteria true → Week 1 success ✅**
@@ -298,11 +298,11 @@ If you have evening time, pick one:
 
 1. **Strict on timing**: Use a timer. When 1.5 hrs is up, stop (unless you're in middle of fixing critical bug). This trains efficiency.
 
-2. **Git discipline**: Commit at end of each day (or morning), even if incomplete. Messages like "WIP: Evo2 attention setup", "Fix: Attention extraction shape bug", "Doc: ACMG notes".
+2. **Git discipline**: Commit at end of each day (or morning), even if incomplete. Messages like "WIP: ESM2 attention setup", "Fix: Attention extraction shape bug", "Doc: ACMG notes".
 
 3. **Notebook hygiene**: As you build, add markdown cells explaining logic. By end of week, each notebook should be readable by someone else (or you in 3 months).
 
-4. **Ask for help early**: If Evo2 attention extraction doesn't work by Wednesday afternoon, ask (PyTorch forum, GitHub issues, etc.). Don't waste 3 days debugging.
+4. **Ask for help early**: If ESM2 attention extraction doesn't work by Wednesday afternoon, ask (PyTorch forum, GitHub issues, etc.). Don't waste 3 days debugging.
 
 5. **Backup**: Push to GitHub at end of each day. Cloud backup is your friend.
 
@@ -315,7 +315,7 @@ If you have evening time, pick one:
 - Or read competitive paper
 
 **Behind (stuck on encoder-decoder Wed):**
-- Skip optional encoder-decoder work Friday, focus on Evo2 completion
+- Skip optional encoder-decoder work Friday, focus on ESM2 completion
 - Pick up encoder-decoder Sunday with fresh eyes
 - Plan to finish Week 1 objectives early Week 2
 

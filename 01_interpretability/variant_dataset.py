@@ -3,6 +3,9 @@ Variant dataset for systematic attention analysis.
 Week 1: Define 10 variants (5 pathogenic, 5 benign)
 """
 
+import requests
+from typing import Optional
+
 # Pathogenic variants from ClinVar
 PATHOGENIC_VARIANTS = [
     {
@@ -112,21 +115,84 @@ BENIGN_VARIANTS = [
 ]
 
 
-def get_variant_sequence(variant_info: dict, window: int = 100) -> str:
+def fetch_uniprot_sequence(uniprot_id: str) -> str:
     """
-    Get protein sequence for variant with surrounding context.
+    Fetch protein sequence from UniProt.
 
     Args:
-        variant_info: Dictionary with gene, uniprot, pos, wt, mut
-        window: Residues on each side of variant
+        uniprot_id: UniProt accession (e.g., "P38398")
 
     Returns:
-        sequence: Protein sequence string
-
-    Note: For now, returns placeholder. Will integrate with UniProt in Week 2.
+        sequence: Full protein sequence
     """
-    # TODO: Placeholder for now
-    raise NotImplementedError("UniProt integration coming in Week 2")
+    url = f"https://rest.uniprot.org/uniprotkb/{uniprot_id}.fasta"
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        raise ValueError(f"Failed to fetch {uniprot_id}: {response.status_code}")
+
+    # Parse FASTA format
+    lines = response.text.strip().split("\n")
+    sequence = "".join(lines[1:])  # Skip header line
+    return sequence
+
+
+def get_variant_sequence(
+    variant_info: dict, window: Optional[int] = None, version: str = "wt"
+) -> str:
+    """
+    Get sequence for variant analysis.
+
+    Args:
+        variant_info: Dict with 'uniprot', 'pos', 'wt', 'mut'
+        window: If specified, extract window around variant position
+        version: 'wt' for wild-type or 'mut' for mutant sequence
+
+    Returns:
+        sequence: Full or windowed protein sequence
+    """
+    full_seq = fetch_uniprot_sequence(variant_info["uniprot"])
+
+    # Validate wild-type matches
+    pos = variant_info["pos"] - 1  # Convert to 0-indexed
+    expected_wt = variant_info["wt"]
+    actual_aa = full_seq[pos]
+
+    if actual_aa != expected_wt:
+        print(
+            f"⚠️  Warning: Expected {expected_wt} at position {variant_info['pos']}, "
+            f"found {actual_aa} in UniProt {variant_info['uniprot']}"
+        )
+
+    # Apply mutation if requested
+    if version == "mut":
+        mut = variant_info["mut"]
+
+        if mut == "del":
+            # Deletion: remove amino acid at position
+            full_seq = full_seq[:pos] + full_seq[pos + 1 :]
+            print(f"Deleted {expected_wt} at position {variant_info['pos']}")
+
+        elif mut.startswith("ins"):
+            # Insertion: add amino acids after position
+            insert_seq = mut[3:]  # Extract sequence after 'ins'
+            full_seq = full_seq[: pos + 1] + insert_seq + full_seq[pos + 1 :]
+            print(f"Inserted {insert_seq} after position {variant_info['pos']}")
+
+        else:
+            # Point mutation: replace single amino acid
+            full_seq = full_seq[:pos] + mut + full_seq[pos + 1 :]
+            
+    elif version != "wt":
+        raise ValueError(f"version must be 'wt' or 'mut', got '{version}'")
+
+    # Extract window if specified
+    if window is None:
+        return full_seq
+
+    start = max(0, pos - window)
+    end = min(len(full_seq), pos + window + 1)
+    return full_seq[start:end]
 
 
 def validate_variant_dataset() -> None:

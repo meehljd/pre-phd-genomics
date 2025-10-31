@@ -12,8 +12,8 @@ if [ $# -lt 1 ]; then
     echo "Usage: ./notebook_to_py.sh <notebook.ipynb> [output.py]"
     echo ""
     echo "Examples:"
-    echo "  ./notebook_to_py.sh 00_evo2_attention_setup.ipynb"
-    echo "  ./notebook_to_py.sh 00_evo2_attention_setup.ipynb script.py"
+    echo "  ./notebook_to_py.sh 00_esm2_attention_setup.ipynb"
+    echo "  ./notebook_to_py.sh 00_esm2_attention_setup.ipynb script.py"
     exit 1
 fi
 

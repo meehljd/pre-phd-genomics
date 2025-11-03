@@ -1,0 +1,99 @@
+{\rtf \tx384 \li384 \fi-384 \sl480 \slmult1 \sa0 1.\tab Avsec, Z., Latysheva, N. & Cheng, J. AlphaGenome: AI for better understanding the genome. {\i{}Google DeepMind} https://deepmind.google/discover/blog/alphagenome-ai-for-better-understanding-the-genome/ (2025).
+\
+2.\tab Medvedev, A. {\i{}et al.} BioToken and BioFM \uc0\u8211{} Biologically-Informed Tokenization Enables Accurate and Efficient Genomic Foundation Models. 2025.03.27.645711 Preprint at https://doi.org/10.1101/2025.03.27.645711 (2025).
+\
+3.\tab Linder, J., Srivastava, D., Yuan, H., Agarwal, V. & Kelley, D. R. [Borzoi] Predicting RNA-seq coverage from DNA sequence as a unifying model of gene regulation. {\i{}Nat Genet} {\b{}57}, 949\uc0\u8211{}961 (2025).
+\
+4.\tab Naghipourfar, M. {\i{}et al.} [cdsFM - EnCodon/DeCodon] A Suite of Foundation Models Captures the Contextual Interplay Between Codons. 2024.10.10.617568 Preprint at https://doi.org/10.1101/2024.10.10.617568 (2024).
+\
+5.\tab Li, H. {\i{}et al.} CGMega: explainable graph neural network framework with attention mechanisms for cancer gene module dissection. {\i{}Nat Commun} {\b{}15}, 5997 (2024).
+\
+6.\tab de Almeida, B. P. {\i{}et al.} [ChatNT] A multimodal conversational agent for DNA, RNA and protein tasks. {\i{}Nat Mach Intell} {\b{}7}, 928\uc0\u8211{}941 (2025).
+\
+7.\tab Lin, H.-Y. {\i{}et al.} Cluster effect for SNP\uc0\u8211{}SNP interaction pairs for predicting complex traits. {\i{}Sci Rep} {\b{}14}, 18677 (2024).
+\
+8.\tab Manzo, G., Borkowski, K. & Ovcharenko, I. Comparative Analysis of Deep Learning Models for Predicting Causative Regulatory Variants. {\i{}bioRxiv} 2025.05.19.654920 (2025) doi:10.1101/2025.05.19.654920.
+\
+9.\tab Gomez-Cabrero, D. & Tegn\uc0\u233{}r, J. N. [CORNETO] Data meets prior knowledge for interpretable mechanistic inference in biology. {\i{}Nat Mach Intell} {\b{}7}, 987\uc0\u8211{}988 (2025).
+\
+10.\tab Rodriguez-Mier, P., Garrido-Rodriguez, M., Gabor, A. & Saez-Rodriguez, J. [CORNETO] Unifying multi-sample network inference from prior knowledge and omics data with CORNETO. {\i{}Nat Mach Intell} {\b{}7}, 1168\uc0\u8211{}1186 (2025).
+\
+11.\tab Camillo, L. P. de L. {\i{}et al.} CpGPT: a Foundation Model for DNA Methylation. 2024.10.24.619766 Preprint at https://doi.org/10.1101/2024.10.24.619766 (2024).
+\
+12.\tab Khan, A. & Lee, B. DeepGene Transformer: Transformer for the gene expression-based classification of cancer subtypes. Preprint at https://doi.org/10.48550/arXiv.2108.11833 (2024).
+\
+13.\tab Clarke, B. {\i{}et al.} [DeepRVAT] Integration of variant annotations using deep set networks boosts rare variant association testing. {\i{}Nat Genet} {\b{}56}, 2271\uc0\u8211{}2280 (2024).
+\
+14.\tab Georgantas, C., Kutalik, Z. & Richiardi, J. Delphi: A Deep-learning Method for Polygenic Risk Prediction. 2024.04.19.24306079 Preprint at https://doi.org/10.1101/2024.04.19.24306079 (2024).
+\
+15.\tab Zhou, Z. {\i{}et al.} DNABERT-S: Pioneering Species Differentiation with Species-Aware DNA Embeddings. Preprint at https://doi.org/10.48550/arXiv.2402.08777 (2024).
+\
+16.\tab Cheng, W. {\i{}et al.} DNALONGBENCH: A Benchmark Suite For Long-Range DNA Prediction Tasks. https://openreview.net/forum?id=opv67PpqLS (2024).
+\
+17.\tab Zhang, A., Jia, J., Sun, M. & Wei, X. EPI-DynFusion: enhancer-promoter interaction prediction model based on sequence features and dynamic fusion mechanisms. {\i{}Front. Genet.} {\b{}16}, (2025).
+\
+18.\tab Monti, R. {\i{}et al.} Evaluation of polygenic scoring methods in five biobanks shows larger variation between biobanks than methods and finds benefits of ensemble learning. {\i{}The American Journal of Human Genetics} {\b{}111}, 1431\uc0\u8211{}1447 (2024).
+\
+19.\tab Lee, I. {\i{}et al.} [G2PT] A genotype-phenotype transformer to assess and explain polygenic risk. 2024.10.23.619940 Preprint at https://doi.org/10.1101/2024.10.23.619940 (2025).
+\
+20.\tab Fishman, V. {\i{}et al.} GENA-LM: a family of open-source foundational DNA language models for long sequences. {\i{}Nucleic Acids Research} {\b{}53}, gkae1310 (2025).
+\
+21.\tab Wu, W. {\i{}et al.} GENERator: A Long-Context Generative Genomic Foundation Model. Preprint at https://doi.org/10.48550/arXiv.2502.07272 (2025).
+\
+22.\tab Wu, Y. {\i{}et al.} Genome-wide fine-mapping improves identification of causal variants. {\i{}Res Sq} rs.3.rs-4759390 (2024) doi:10.21203/rs.3.rs-4759390/v1.
+\
+23.\tab Vishniakov, K. {\i{}et al.} Genomic Foundationless Models: Pretraining Does Not Promise Performance. https://openreview.net/forum?id=kDZKEtDnT1 (2024).
+\
+24.\tab Consens, M. E., Li, B., Poetsch, A. R. & Gilbert, S. Genomic language models could transform medicine but not yet. {\i{}npj Digit. Med.} {\b{}8}, 212 (2025).
+\
+25.\tab Benegas, G., Ye, C., Albors, C., Li, J. C. & Song, Y. S. Genomic Language Models: Opportunities and Challenges. Preprint at https://doi.org/10.48550/arXiv.2407.11435 (2024).
+\
+26.\tab Cornman, A. {\i{}et al.} [gLM2] The OMG dataset: An Open MetaGenomic corpus for mixed-modality genomic language modeling. 2024.08.14.607850 Preprint at https://doi.org/10.1101/2024.08.14.607850 (2024).
+\
+27.\tab Kesimoglu, Z. N. & Bozdag, S. GRAF: Graph Attention-aware Fusion Networks. {\i{}Sci Rep} {\b{}14}, 29119 (2024).
+\
+28.\tab Sanabria, M., Hirsch, J., Joubert, P. M. & Poetsch, A. R. [GROVER] DNA language model GROVER learns sequence context in the human genome. {\i{}Nat Mach Intell} {\b{}6}, 911\uc0\u8211{}923 (2024).
+\
+29.\tab Li, Z., Subasri, V., Stan, G.-B., Zhao, Y. & Wang, B. GV-Rep: A Large-Scale Dataset for Genetic Variant Representation Learning. Preprint at https://doi.org/10.48550/arXiv.2407.16940 (2024).
+\
+30.\tab Bunne, C. {\i{}et al.} How to build the virtual cell with artificial intelligence: Priorities and opportunities. {\i{}Cell} {\b{}187}, 7045\uc0\u8211{}7063 (2024).
+\
+31.\tab Hegde, M., Nebel, J.-C. & Rahman, F. Language modelling techniques for analysing the impact of human genetic variation. Preprint at https://doi.org/10.48550/arXiv.2503.10655 (2025).
+\
+32.\tab Liu, Z. {\i{}et al.} Life-Code: Central Dogma Modeling with Multi-Omics Sequence Unification. Preprint at https://doi.org/10.48550/arXiv.2502.07299 (2025).
+\
+33.\tab Yuan, Q. & Duren, Z. [LINGER] Inferring gene regulatory networks from single-cell multiome data using atlas-scale external data. {\i{}Nat Biotechnol} {\b{}43}, 247\uc0\u8211{}257 (2025).
+\
+34.\tab He, Y. {\i{}et al.} [LucaOne] Generalized biological foundation model with unified nucleic acid and protein language. {\i{}Nat Mach Intell} {\b{}7}, 942\uc0\u8211{}953 (2025).
+\
+35.\tab An, M. {\i{}et al.} [LungENN] Systematic identification of pathogenic variants of non-small cell lung cancer in the promoters of DNA-damage repair genes. {\i{}eBioMedicine} {\b{}110}, 105480 (2024).
+\
+36.\tab Liu, O. {\i{}et al.} METAGENE-1: Metagenomic Foundation Model for Pandemic Monitoring. Preprint at https://doi.org/10.48550/arXiv.2501.02045 (2025).
+\
+37.\tab Rakowski, A. & Lippert, C. [MIFM] Multiple instance fine-mapping: predicting causal regulatory variants with a deep sequence model. 2025.06.13.25329551 Preprint at https://doi.org/10.1101/2025.06.13.25329551 (2025).
+\
+38.\tab Hoffmann, M. {\i{}et al.} [NeEDL] Network medicine-based epistasis detection in complex diseases: ready for quantum computing. {\i{}Nucleic Acids Research} {\b{}52}, 10144\uc0\u8211{}10160 (2024).
+\
+39.\tab Holur, P. {\i{}et al.} [RDE-DNA2vec] Embed-Search-Align: DNA Sequence Alignment using Transformer Models. Preprint at https://doi.org/10.48550/arXiv.2309.11087 (2024).
+\
+40.\tab Yan, B. {\i{}et al.} Recent advances in deep learning and language models for studying the microbiome. {\i{}Front. Genet.} {\b{}15}, (2025).
+\
+41.\tab Zhang, Q. {\i{}et al.} Scientific Large Language Models: A Survey on Biological & Chemical Domains. Preprint at https://doi.org/10.48550/arXiv.2401.14656 (2024).
+\
+42.\tab Ayanian, S. {\i{}et al.} [STRAND] Introducing STRAND: A Foundational Sequence Transformer for Range Adaptive Nucleotide Decoding. Preprint at https://doi.org/10.21203/rs.3.rs-6115078/v1 (2025).
+\
+43.\tab Trop, E. {\i{}et al.} The Genomics Long-Range Benchmark: Advancing DNA Language Models. https://openreview.net/forum?id=8O9HLDrmtq (2024).
+\
+44.\tab Benegas, G., Eraslan, G. & Song, Y. S. [TraitGym] Benchmarking DNA Sequence Models for Causal Regulatory Variant Prediction in Human Genetics. 2025.02.11.637758 Preprint at https://doi.org/10.1101/2025.02.11.637758 (2025).
+\
+45.\tab Consens, M. E. {\i{}et al.} Transformers and genome language models. {\i{}Nat Mach Intell} {\b{}7}, 346\uc0\u8211{}362 (2025).
+\
+46.\tab Yang, Q. {\i{}et al.} TrinityDNA: A Bio-Inspired Foundational Model for Efficient Long-Sequence DNA Modeling. Preprint at https://doi.org/10.48550/arXiv.2507.19229 (2025).
+\
+47.\tab Liu, T., Zhang, X., Ying, R. & Zhao, H. [UKBioBert; UKBioFormer; UKBioZoi] Pre-training Genomic Language Model with Variants for Better Modeling Functional Genomics. 2025.02.26.640468 Preprint at https://doi.org/10.1101/2025.02.26.640468 (2025).
+\
+48.\tab Liu, T. {\i{}et al.} UNICORN: Towards Universal Cellular Expression Prediction with a Multi-Task Learning Framework. 2025.01.22.634371 Preprint at https://doi.org/10.1101/2025.01.22.634371 (2025).
+\
+49.\tab Marquet, C., Schlensok, J., Abakarova, M., Rost, B. & Laine, E. [VespaG] Expert-guided protein language models enable accurate and blazingly fast fitness prediction. {\i{}Bioinformatics} {\b{}40}, btae621 (2024).
+\
+}

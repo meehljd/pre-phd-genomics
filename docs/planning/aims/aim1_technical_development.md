@@ -451,6 +451,45 @@ def diagnostic_pipeline(patient_vcf, hpo_terms):
 - Calibration curves by ancestry
 - Disparate impact ratio (min/max AUC across groups)
 
+### Multi-Ancestry Training Strategy
+
+[Insert debiasing_approaches_rare_disease.md full implementation plan]
+
+**Tier 1: Core Debiasing (Jan-Feb 2027 implementation)**
+
+1. Genetic Ancestry via PCA (10-15 hrs)
+   - Continuous PC1, PC2, PC3...
+   - Stratified sampling balanced by PC deciles
+   
+2. Subspace Removal (12-18 hrs)
+   - Regression head: ancestry_PCAs ← encoder_output
+   - Projection: e_debiased = e - (W^T W) @ e
+   - Validate: MI(ancestry; e_debiased) near zero
+   
+3. Sex as Conditional Covariate (2-3 hrs)
+   - Input feature, not removed
+   - X-chr special handling
+   - Sex-stratified variant effects
+
+**Tier 2: Optional Enhancements (if fairness issues)**
+
+4. INLP Refinement (12-18 hrs)
+5. Fairness Constraints (10-15 hrs)
+
+**Validation Matrix:**
+
+[Insert debiasing doc "VALIDATION FRAMEWORK" table]
+
+Ancestry × Sex | Accuracy | Sensitivity | Specificity
+EUR-M          | 92%      | 85%         | 95%
+EUR-F          | 91%      | 84%         | 96%
+AFR-M          | 89%      | 82%         | 93%
+AFR-F          | 88%      | 81%         | 94%
+... [all combos]u
+
+✓ Pass: All cells within 3-5% of best
+
+
 ---
 
 ## V. INTERPRETABILITY METHODS
@@ -483,69 +522,74 @@ def diagnostic_pipeline(patient_vcf, hpo_terms):
 - Geneticist can see if model is looking at biologically relevant regions
 - Red flag if model attends to non-coding regions for coding variant (possible error)
 
-### Method 2: SHAP (SHapley Additive exPlanations)
+### Method 2: Ablation + Population Baseline (Core)
+**Setup:**
+- Pre-compute population variant effect catalog:
+  - Encode reference CDS (no variants) â†’ baseline embedding `e_ref`
+  - For each variant in gnomAD/dbSNP: encode CDS + variant individually â†’ `e_vi_pop`
+  - Store population shifts: `Î”e_pop_i = e_vi_pop - e_ref`
+  - Stratify by ancestry (EUR, AFR, EAS, SAS)
 
-**Purpose:** Quantify contribution of each feature to prediction
+**Subject-level inference:**
+- Subject has CDS variants {v1, v2, ..., vn}
+- Encode full CDS + all variants â†’ `e_full`
+- For each variant vi:
+  - Encode CDS + all variants except vi â†’ `e_-vi`
+  - Subject ablation effect: `Î”e_subj_i = e_full - e_-vi`
+  - Compare: `Î”e_subj_i` vs population distribution `Î”e_pop_i`
 
-**Features to explain:**
-- Variant type (missense, nonsense, frameshift, splice, etc.)
-- Population frequency (gnomAD AF)
-- In silico scores (CADD, REVEL, AlphaMissense)
-- Conservation (PhyloP, GERP)
-- Gene constraint (pLI, LOEUF)
-- Phenotype match score
-- Network proximity score
+**Implementation:**
+- Week 1-2: Build gnomAD population catalog
+- Week 3: Ablation on 10-30 subjects
+- Week 4: Ancestry stratification + validation
+
+**Output per variant:**
+```
+Variant: rs123 (p.Arg123His)
+  Subject embedding shift: -0.8σ
+  EUR carriers (n=450): -0.75σ ± 0.2
+  AFR carriers (n=12): -0.5σ ± 0.4
+  → Interpretation: Effect matches EUR; likely real
+```
+
+### Method 3: Saliency Sanity Check
+**Method:**
+- Single backward pass: `âˆ‚prediction/âˆ‚input`
+- Identify which CDS positions have high gradients
+- Do those positions cluster around variant sites?
+
+**Pass/fail criteria:**
+- If variant at position i has high saliency â†’ âœ“ consistent
+- If variant at position i has near-zero saliency â†’ âš ï¸ flag (possible spurious)
+
+**Single backward pass check:**
+- Do high-gradient positions align with variant sites? (Pass: >70%)
+- Red flag spurious predictions
+
+### Method 4: Integrated Gradients (Optional)
+
+**Setup:**
+- Path integral from reference CDS â†’ subject CDS
+- Interpolate: `seq(Î±) = ref + Î± Ã— (subject - ref)` for Î± âˆˆ [0,1]
+- Integrate gradients: `attr_i = âˆ« âˆ‚prediction/âˆ‚seq(Î±) dÎ±`
+- Attributes contribution of each position to final prediction
+
+**When to use:**
+- If ablation shows large combined effect but small individual effects â†’ epistasis signal
+- Validate: Do variants in high-LD regions have correlated Integrated Gradients?
 
 **Output:**
-- SHAP values: Positive = pushes toward pathogenic, Negative = pushes toward benign
-- Rank features by |SHAP value|
-- Report top 5 features driving prediction
-
-**Example interpretation:**
 ```
-Variant: Gene A p.Arg123Ter (nonsense)
-SHAP values:
-  +0.8: Variant type (nonsense)
-  +0.5: Gene constraint (high pLI = loss-of-function intolerant)
-  +0.3: Phenotype match (HPO terms align with Gene A)
-  -0.2: Population frequency (absent in gnomAD)
-  +0.1: Conservation (moderately conserved)
-  
-→ Model prediction: Pathogenic (driven by nonsense + pLI + phenotype match)
+Variants v1, v2 both show weak individual effects (-0.1Ïƒ each)
+But combined: -0.5Ïƒ (non-additive)
+Integrated Gradients path: Shows interaction at embedding layer
+Interpretation: v1 and v2 together enhance protein disruption
 ```
 
-### Method 3: Counterfactual Explanations
+If ablation shows large combined effects but weak individual effects → epistasis signal
 
-**Inspiration:** MrVI approach (variational inference for mechanistic explanations)
 
-**Question:** What would need to change about this variant for the model to predict differently?
-
-**Process:**
-1. Take predicted pathogenic variant
-2. Perturb features one at a time (in silico)
-3. Re-run model to see if prediction flips
-4. Identify minimal changes that flip prediction
-
-**Example:**
-```
-Original: Gene A missense variant, CADD=25, gnomAD AF=0, pLI=0.99
-Prediction: Pathogenic (score 85)
-
-Counterfactual 1: If CADD=15 (instead of 25)
-→ Prediction: VUS (score 55) [FLIPPED]
-Interpretation: CADD score is critical for this prediction
-
-Counterfactual 2: If gnomAD AF=0.001 (instead of 0)
-→ Prediction: Likely benign (score 35) [FLIPPED]
-Interpretation: Even rare presence in gnomAD strongly argues against pathogenicity
-```
-
-**Clinical utility:**
-- Reveals which features are most critical
-- Helps geneticist understand model reasoning
-- Identifies brittle predictions (flip with small changes → low confidence)
-
-### Method 4: Gene-Level Attribution (GenNet)
+### Method 5: Gene-Level Attribution (GenNet)
 
 **Unique to visible neural network architecture:**
 
@@ -577,19 +621,202 @@ disruption causes cancer predisposition phenotype
 
 **Scientific value:** Can discover novel gene-pathway associations
 
-### Method 5: Saliency Maps
+### Method 6: LD-Corrected Variant Validation (Post-hoc, Paper 1 phase)
 
-**For sequence-based models:**
+### **2.1 LD-Corrected Variant Effects** (12-18 hrs)
 
-**Process:**
-1. Compute gradient of output with respect to input sequence
-2. Gradient magnitude = "saliency" (how much each nucleotide matters)
-3. Visualize as heatmap over genomic sequence
+**After training, re-analyze ablation accounting for LD:**
 
-**Use case:**
-- Identify critical nucleotides for variant interpretation
-- Example: Splice variant → high saliency at splice donor/acceptor sites
-- Example: Regulatory variant → high saliency at transcription factor binding motifs
+```
+For each subject variant v_i:
+  1. Get ablation effect (existing method): Î”e_i
+  2. Find LD partners in subject's ancestry:
+     LD_partners = {v_j : rÂ²_ancestry(v_i, v_j) > 0.3}
+  
+  3. Conditional effect (regress out LD):
+     Î”e_i_conditional = Î”e_i - Î£â±¼ Î²_j Ã— Î”e_j
+     where Î²_j = regression coeff of LD partners on Î”e_i
+  
+  4. Compare to population baseline:
+     - Does Î”e_i_conditional match gnomAD carriers?
+     - If yes â†’ likely causal signal
+     - If no â†’ confounded by LD in this subject
+```
+
+**Output per variant per subject:**
+
+```
+Subject 001, Gene BRCA1:
+
+Variant rs123 (p.Arg123His):
+  Raw ablation effect: -0.80Ïƒ
+  LD partners in subject's EUR ancestry (rÂ²>0.3):
+    - rs456 (rÂ²=0.6): ablation effect -0.50Ïƒ
+    - rs789 (rÂ²=0.4): ablation effect -0.35Ïƒ
+  LD-conditional effect: -0.75Ïƒ (regressed out LD partners)
+  Population EUR carriers (n=450): -0.76Ïƒ Â± 0.2
+  â†’ LD-corrected effect matches population âœ“ (likely causal)
+
+Variant rs456 (p.Leu456Val):
+  Raw ablation effect: +0.30Ïƒ
+  LD partners: none (rÂ²<0.3 with all others)
+  LD-conditional effect: +0.30Ïƒ (no change)
+  Population EUR carriers (n=150): +0.31Ïƒ Â± 0.15
+  â†’ Clean signal, no LD confounding âœ“
+```
+
+**Interpretation guide:**
+- If LD-conditional >> raw â†’ variant was LD-tagged, not causal
+- If LD-conditional â‰ˆ raw â†’ variant independent, likely causal
+- If LD-conditional matches population â†’ causal signal validated
+
+**Deliverables:**
+- Supplementary Table: LD-corrected effects for all variants in Paper 1 cohort
+- Visualization: raw vs LD-corrected effects (scatter plot)
+- Flagged variants: high LD confounding (warn clinicians)
+
+---
+
+### **2.2 Ancestry-Stratified Fine-Mapping** (15-25 hrs)
+
+**Which variants are likely causal vs just LD-tagged?**
+
+**Method 1: FINEMAP/SuSiE integration** (if time)
+
+```
+Use model predictions as pseudo-GWAS summary statistics:
+  1. For each variant: compute effect size from ablation
+  2. Compute LD matrix per ancestry
+  3. Run FINEMAP/SuSiE separately per ancestry:
+     - EUR LD + EUR effects â†’ credible set EUR
+     - AFR LD + AFR effects â†’ credible set AFR
+     - EAS LD + EAS effects â†’ credible set EAS
+  
+  4. Compare across ancestry:
+     - Variant in 95% credible set in ALL ancestries? â†’ strong causal signal
+     - Variant in EUR set only? â†’ EUR-specific tag or confounding
+```
+
+**Method 2: Simpler Conditional Analysis** (if limited time, recommended)
+
+```
+For each gene:
+  1. Rank variants by |ablation effect|
+  2. For each variant v_i, condition on all higher-effect variants:
+     v_i_conditional_effect = v_i effect after removing correlated higher-effects
+  
+  3. If v_i_conditional becomes near-zero â†’ likely tagged by higher-effect variant
+     If v_i_conditional stays strong â†’ independent causal
+```
+
+**Output per gene:**
+
+```
+Gene TP53:
+
+Variant rank | Variant | Raw Effect | Conditional Effect | 95% in EUR | 95% in AFR | ClinVar  |
+1            | rs_path1| -1.2Ïƒ     | -1.2Ïƒ              | 96%        | 97%        | Path     |
+2            | rs_ld1  | -0.5Ïƒ     | -0.1Ïƒ              | 5%         | <1%        | Benign   |
+3            | rs_path2| -0.8Ïƒ     | -0.8Ïƒ              | 92%        | 95%        | Path     |
+4            | rs_ld2  | -0.3Ïƒ     | -0.05Ïƒ             | 3%         | <1%        | Benign   |
+
+Interpretation:
+  - rs_path1, rs_path2: strong, independent causal signals (consistent across ancestry)
+  - rs_ld1, rs_ld2: LD-tagged; conditional effect collapses (not causal)
+```
+
+**Validation:**
+- Do fine-mapped variants match ACMG/ClinVar pathogenic classifications?
+- Are LD-tagged variants benign/VUS?
+- Do fine-mapped variants replicate across ancestry?
+
+**Deliverables:**
+- FINEMAP output per ancestry (or conditional ranking table)
+- Supplementary Figure: 95% credible set overlap across ancestry
+- Validated causal variant list (for Paper 1 Table)
+
+---
+
+### **2.3 LD Structure Ã— Fairness Correlation** (6-12 hrs)
+
+**Does model fairness track LD differences?**
+
+```
+Hypothesis: LD structure mismatch causes ancestry fairness gaps
+
+Analysis:
+  For each subject Ã— ancestry pair:
+    1. Compute LD profile for subject's variants:
+       ld_profile_i = [rÂ²(var_i, var_j) for all j]
+    
+    2. Compute distance to training ancestry LD structures:
+       ld_distance = ||ld_profile_i - ld_profile_train||
+    
+    3. Measure prediction error:
+       error = |accuracy_subject_ancestry - accuracy_training_ancestry|
+    
+    4. Correlate:
+       corr(ld_distance, error) = ?
+```
+
+**Expected result:**
+
+```
+If LD structure is major fairness driver:
+  - AFR subjects with EUR-like LD patterns â†’ lower error
+  - AFR subjects with different LD patterns â†’ higher error
+  - Correlation: r > 0.4 (significant)
+
+If LD is not the issue:
+  - Correlation: r < 0.2 (noise)
+  - Other factors dominating (rare variants, allele frequency effects)
+```
+
+**Output:**
+- Scatter plot: LD distance vs prediction error (per ancestry)
+- Correlation coefficient + p-value
+- Report: "LD structure accounts for X% of fairness gap"
+
+**Deliverables:**
+- Figure: LD structure Ã— fairness correlation
+- Table: which ancestries most affected by LD mismatch
+
+
+**Timeline:** Implement Weeks 1-3 of Paper 1 analysis (Jun 2027)
+
+**Step 1: LD-Corrected Ablation Effects (12-18 hrs)**
+
+For each variant:
+1. Get ablation effect: Δe_i
+2. Find LD partners (r² > 0.3 in subject's ancestry)
+3. Conditional effect: Δe_i_conditional = Δe_i - Σ β_j × Δe_j
+4. Compare to population carriers
+
+Output: Per-variant table showing raw vs LD-corrected vs population baseline
+
+**Step 2: Fine-Mapping per Ancestry (12-18 hrs)**
+
+- Rank variants by |ablation effect|
+- Condition on higher-effect variants → identify LD-tagged
+- Generate credible sets (SuSiE per ancestry)
+- Compare overlap across populations (target: >50%)
+
+Output: Fine-mapped causal variants + confidence
+
+**Step 3: LD × Fairness Correlation (6-12 hrs)**
+
+- Does LD structure mismatch explain fairness gaps?
+- Correlate: LD_distance vs prediction_error
+- Quantify: "LD accounts for X% of fairness gaps"
+
+Output: Scatter plot + quantification
+
+**Validation Gates (Paper 1):**
+- LD-corrected effects match population (r > 0.8) ✓
+- Credible set overlap >50% across ancestries ✓
+- Fine-mapped variants match ClinVar (precision >85%) ✓
+- LD accounts for ≤50% of fairness gaps ✓
+```
 
 ---
 
@@ -954,6 +1181,50 @@ disruption causes cancer predisposition phenotype
 - Failure analysis
 - Code availability (GitHub repo)
 - Data availability statement
+
+
+```
+Table 2: Model Fairness Across Ancestry and Sex Groups
+
+                EUR         AFR         EAS         SAS
+           M    F      M    F      M    F      M    F
+Accuracy   92%  91%    89%  88%    90%  89%    87%  86%
+Sensitivity 85%  84%    82%  81%    84%  83%    80%  82%
+Specificity 95%  96%    93%  94%    95%  94%    92%  93%
+
+p-value (ANOVA): 0.023 (within acceptable range)
+All cell differences <5% from best-performing strata ✓
+```
+
+**Supplementary Table S3: Variant-Level Interpretability Validation**
+Columns:
+[Variant | Ablation effect | Pop baseline (EUR) | Pop baseline (AFR) | 
+ Saliency score | Clinician review | ClinVar | Match?]
+Example rows:
+[rs123 | -0.80σ | -0.75σ ± 0.2 | -0.50σ ± 0.4 | 0.92 | Pathogenic ✓ | Path | YES]
+[rs456 | +0.30σ | +0.31σ ± 0.15 | +0.32σ ± 0.2 | 0.85 | Benign ✓ | Benign | YES]
+[rs789 | -0.40σ | -0.45σ ± 0.25 | -0.15σ ± 0.5 | 0.45 | VUS ⚠️ | VUS | NO]
+
+```
+Supplementary Table S5: LD-Corrected Variant Effects and Fine-Mapping
+
+Variant | Gene | Raw Ablation | LD Partners | Conditional | Pop Match | SuSiE 95% EUR | SuSiE 95% AFR | Causal?
+--------|------|--------------|-------------|-------------|-----------|---------------|---------------|----------
+rs_p1   | BRCA1| -1.20σ      | None        | -1.20σ      | -1.18σ    | 96%          | 97%          | YES
+rs_ld1  | BRCA1| -0.50σ      | rs_p1(r²=0.6)| -0.10σ      | -0.12σ    | 5%           | <1%          | NO
+rs_p2   | BRCA1| -0.80σ      | None        | -0.80σ      | -0.79σ    | 92%          | 95%          | YES
+rs_ld2  | BRCA1| -0.30σ      | rs_p2(r²=0.5)| -0.05σ      | -0.08σ    | 3%           | <1%          | NO
+
+Interpretation: rs_p1, rs_p2 identified as causal; rs_ld1, rs_ld2 are LD-tagged
+```
+
+```
+Supplementary Figure S6: LD Structure Accounts for X% of Fairness Gaps
+
+Panel A: Scatter plot - LD distance vs prediction error (per ancestry)
+Panel B: Correlation strength (r and p-value)
+Panel C: Bar plot - LD contribution to fairness gap (25% LD, 75% other factors)
+```
 
 ### Software Release
 

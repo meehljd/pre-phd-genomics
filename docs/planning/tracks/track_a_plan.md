@@ -44,46 +44,102 @@
 
 ---
 
-### Phase 2: SHAP + LIME + Counterfactual (Dec 2025 - 1.5 weeks)
+### Phase 2: Variant-Level Ablation + Population Baseline (Dec 2025 - 1.5 weeks)
 
-**Goal:** Advanced explanations on your variant ranking system
+**Goal:** Build clinical-grade variant interpretation pipeline
 
-**Reading (targeted, quick):**
-1. **Lundberg & Lee 2017 SHAP** - 1.5 hours (you know gradients-based methods)
-2. **Goyal et al. 2019 Counterfactual** - 1 hour (quick read on what-if scenarios)
+**Reading:** None (you have this from Track B prep)
 
-**Hands-On (Core work):**
+**Hands-On (20-25 hours):**
 
-```python
-# Project: Variant Ranking Interpretability
+### 1. **Ablation + Population Baseline** (Core, 15-20 hrs)
+**Most clinically usefulâ€”do this first.**
 
-# 1. SHAP on pathogenicity prediction (3 hours)
-- Model: Your encoder-decoder predicting pathogenic/benign
-- Dataset: 100 variants (50 pathogenic ClinVar, 50 benign gnomAD)
-- SHAP analysis per variant:
-  - Which amino acid positions drive pathogenicity score?
-  - Do top-ranked positions align with known functional domains?
-  - SHAP visualization: force plots + bar plots
-- Validation: Compare to known pathogenic regions in literature
+**Setup:**
+- Pre-compute population variant effect catalog:
+  - Encode reference CDS (no variants) â†’ baseline embedding `e_ref`
+  - For each variant in gnomAD/dbSNP: encode CDS + variant individually â†’ `e_vi_pop`
+  - Store population shifts: `Î”e_pop_i = e_vi_pop - e_ref`
+  - Stratify by ancestry (EUR, AFR, EAS, SAS)
 
-# 2. LIME local explanations (2-3 hours)
-- For 10 diverse variants (5 pathogenic, 5 benign)
-- Generate LIME local surrogate models
-- Output: "For this specific variant, these features matter most"
-- Test with clinician (ask Eric Klee lab): Is this interpretable?
+**Subject-level inference:**
+- Subject has CDS variants {v1, v2, ..., vn}
+- Encode full CDS + all variants â†’ `e_full`
+- For each variant vi:
+  - Encode CDS + all variants except vi â†’ `e_-vi`
+  - Subject ablation effect: `Î”e_subj_i = e_full - e_-vi`
+  - Compare: `Î”e_subj_i` vs population distribution `Î”e_pop_i`
 
-# 3. Counterfactual variants (3-4 hours)
-- Pathogenic example: "BRCA1 p.R1699W"
-- Query: "What single amino acid subs flip this to benign?"
-- Generate top 20 counterfactuals ranked by confidence
-- Validate: Are these realistic? What do they teach?
-  - E.g., "R→K keeps charge, more likely benign" = mechanistic insight
+**Output per variant:**
+```
+Variant: rs123 (p.Arg123His)
+  Subject embedding shift: -0.8Ïƒ
+  EUR carriers (n=450): -0.75Ïƒ Â± 0.2
+  AFR carriers (n=12): -0.5Ïƒ Â± 0.4
+  Interpretation: Effect matches EUR population; likely real
+  
+Variant: rs456 (p.Leu456Val) [NOVEL]
+  Subject embedding shift: +0.3Ïƒ
+  Population: No carriers in gnomAD
+  Interpretation: Unique; no population baseline
 ```
 
+**Advantages:**
+- Deterministic (not stochastic permutations)
+- Population-aware (catches ancestry confounding)
+- Computationally cheap (O(n) encode steps + precomputed catalog lookup)
+- Clinically interpretable (compare to known carriers)
+
+---
+
+### 2. **Integrated Gradients** (Optional enhancement, 6-8 hrs)
+**If variants interact non-additively.**
+
+**Setup:**
+- Path integral from reference CDS â†’ subject CDS
+- Interpolate: `seq(Î±) = ref + Î± Ã— (subject - ref)` for Î± âˆˆ [0,1]
+- Integrate gradients: `attr_i = âˆ« âˆ‚prediction/âˆ‚seq(Î±) dÎ±`
+- Attributes contribution of each position to final prediction
+
+**When to use:**
+- If ablation shows large combined effect but small individual effects â†’ epistasis signal
+- Validate: Do variants in high-LD regions have correlated Integrated Gradients?
+
 **Output:**
-- Notebook: "SHAP Analysis of Variant Pathogenicity"
-- Notebook: "Counterfactual Variant Generation"
-- Comparison document: SHAP vs LIME vs Attention (700 words)
+```
+Variants v1, v2 both show weak individual effects (-0.1Ïƒ each)
+But combined: -0.5Ïƒ (non-additive)
+Integrated Gradients path: Shows interaction at embedding layer
+Interpretation: v1 and v2 together enhance protein disruption
+```
+
+---
+
+### 3. **Saliency Sanity Check** (4-6 hrs)
+**Quick validation of ablation results.**
+
+**Method:**
+- Single backward pass: `âˆ‚prediction/âˆ‚input`
+- Identify which CDS positions have high gradients
+- Do those positions cluster around variant sites?
+
+**Pass/fail criteria:**
+- If variant at position i has high saliency â†’ âœ“ consistent
+- If variant at position i has near-zero saliency â†’ âš ï¸ flag (possible spurious)
+
+---
+
+Key tasks:
+1. Build population variant catalog (gnomAD + ancestry stratification) - 8-10 hrs
+2. Implement ablation inference pipeline - 6-8 hrs
+3. Saliency sanity checks - 4-6 hrs
+4. Optional: Integrated Gradients - 2-4 hrs
+
+**Output:**
+- Ablation inference notebook
+- Population variant catalog (structure + metadata)
+- Clinical interpretation guide template
+- GitHub code (reproducible)
 
 ---
 

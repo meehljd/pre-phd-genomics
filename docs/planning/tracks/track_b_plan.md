@@ -57,34 +57,156 @@
 - Benchmark: Accuracy vs. ClinVar gold standard
 ```
 
-**Hands-On (Week 2: Ancestry Confounder Analysis, 3-4 hours) - NEW:**
+### Optional: Ancestry-Stratified LD Pruning (6-8 hours)
+
+## PART 1: PROACTIVE LD HANDLING (8-10 hrs)
+
+### **1.1 Ancestry-Stratified LD Pruning** (6-8 hrs)
+
+**During feature engineering (Dec 2025):**
 
 ```python
-# Exercise 4: gnomAD frequency stratification (1.5 hours)
-- Download gnomAD allele frequencies (EUR, AFR, AMR, EAS, SAS populations)
-- For 20 variants: Compare pathogenicity calls across populations
-- Identify: Which variants have population-specific AF differences?
-- Question: Would ACMG classification change if you used wrong population?
-- Example: PM2 criterion (absent in population databases) may fail if 
-  variant is common in underrepresented population not in gnomAD
+# For each ancestry in training cohort:
+for ancestry in ['EUR', 'AFR', 'EAS', 'SAS']:
+  # Compute LD matrix (rÂ² between SNPs)
+  ld_matrix_ancestry = compute_ld(genotypes[ancestry], r2_threshold=0.1)
+  
+  # LD-prune independently in each ancestry
+  pruned_variants_ancestry = ldprune(ld_matrix_ancestry)
 
-# Exercise 5: PCA ancestry correction baseline (1.5 hours)
-- Dataset: 1000 Genomes Project (public, n=2504 samples)
-- Compute principal components on genetic data (common variants)
-- Visualize: PC1 vs PC2 (should separate continental ancestry)
-- Test: Does including PC1-PC10 as covariates improve variant calling?
-- Implementation: Basic logistic regression with/without PC covariates
-
-# Exercise 6: Training data bias analysis (1 hour)
-- Review ClinVar ancestry distribution (expect ~75-80% European)
-- Hypothesis: Models trained on ClinVar will underperform on non-EUR populations
-- Document mitigation strategies for Aim 1:
-  * Oversample non-EUR training data (POPRES, PAGE, All of Us)
-  * Ancestry-stratified validation (report metrics per group)
-  * Calibration per population group
-  * Use ancestry-adjusted allele frequencies
-- Create fairness metric: Ratio of precision/recall across groups
+# Take union: variants that pass pruning in ALL ancestries
+final_variants = union(pruned_variants_EUR, 
+                       pruned_variants_AFR, 
+                       pruned_variants_EAS, 
+                       pruned_variants_SAS)
 ```
+
+**Effect:**
+- Removes variants that are tagged by others in *any* ancestry
+- Keeps "independent" variants that aren't LD-proxies
+- Reduces feature dimension, removes LD leakage
+
+**Output:**
+```
+Started with: 1,000 CDS variants across cohort
+After ancestry-stratified LD pruning: 720 variants
+  - Removed 280 variants (mostly LD-tagged across ancestries)
+  - Retained variants: mix of low-frequency and ancestry-specific
+```
+
+**Parameters:**
+- LD threshold: rÂ² < 0.1 (conservative; could use 0.2 if needed)
+- Ancestry groupings: use 1000G superpopulations (EUR, AFR, EAS, SAS, AMR)
+- Window size: 1 Mb (standard)
+
+**Deliverables:**
+- Variant list: final_variants (n=720) with ancestry-pruning metadata
+- LD matrix per ancestry (for later fine-mapping)
+
+---
+
+### **1.2 Optional: LD-Corrected Loss During Training** (2-4 hrs, skip if time tight)
+
+**If pursuing, add to phenotype loss:**
+
+```
+Standard loss:
+  L_phenotype = cross_entropy(pred, true)
+
+LD-aware loss:
+  L_ld = Î£áµ¢â±¼ |corr_ancestry(varáµ¢, varâ±¼)| Ã— |effect_i| Ã— |effect_j|
+  
+Total loss:
+  L = L_phenotype + Î» Ã— L_ld
+  
+where Î» ~ 0.01-0.1 (tuned on validation set)
+```
+
+**Effect:** Model penalizes learning from highly correlated variants; prefers "independent" effects
+
+**Pros:** Single model; learns ancestry-aware importance  
+**Cons:** Extra hyperparameter; modest benefit vs pruning
+
+**Decision:** Include only if Paper 1 validation shows LD-related fairness issues; otherwise skip.
+
+
+**Why:** Remove LD-tagged variants before training to reduce ancestry-specific confounding
+
+**Implementation:**
+- Compute LD matrices per ancestry (EUR, AFR, EAS, SAS)
+- LD-prune independently in each ancestry (r² < 0.1)
+- Take union: variants passing all ancestries
+- Output: Final variant set (~70% of input after pruning)
+
+**Deliverables:**
+- ✅ Ancestry-stratified LD matrices
+- ✅ Final variant list (post-pruning)
+- ✅ Pruning metadata table
+- ✅ LD correlation heatmap
+
+**Note:** Optional if time tight; can defer to early Aim 1 (Jan 2027)
+
+## Hands-On Week 2: Ancestry Robustness (8-12 hours) - EXPANDED
+
+1. **Genetic Ancestry via PCA** (10-15 hrs)
+   - Compute ancestry PCAs from training cohort genotypes (relatedness-pruned SNPs)
+   - Use continuous PC1, PC2, PC3... (not discrete self-reported categories)
+   - Bin by deciles for stratified sampling
+   
+   ```
+   Stratified sampling:
+     - Divide training data by PC1 decile — PC2 decile ~100 ancestry cells
+     - Sample equal # subjects per cell per batch
+     - Benefits: granular, captures admixture, objective
+   ```
+
+2. **Subspace Removal** (12-18 hrs)
+   - Train regression head: `ancestry_PCAs = f_ancestry(encoder_output)`
+   - Project out ancestry-correlated dimensions: `e_debiased = e - (W^T W) @ e`
+   - Validate: MI(ancestry; e_debiased) should drop near-zero
+   - Visualize: which embedding dimensions encode ancestry?
+
+3. **Sex as Categorical Covariate** (2-3 hrs)
+   - Do NOT subspace-remove sex (keep biological signal)
+   - Instead: condition on sex during training/inference
+   - X-chromosome handling:
+     ```
+     Males (XY): code X variants as 0/1 (hemizygous)
+     Females (XX): code X variants as 0/1/2 (diploid)
+     ```
+   - Measure sex-specific variant effects in ablation output
+
+```python
+### Exercise 4: Genetic Ancestry PCA (2-3 hours)
+[See debiasing doc Section "1. Genetic Ancestry via PCA"]
+- Compute PCAs on training cohort
+- Visualize PC1 vs PC2
+- Bin by deciles for stratified sampling
+
+### Exercise 5: Subspace Removal (2-3 hours)
+[See debiasing doc Section "2. Subspace Removal"]
+- Train ancestry regression head
+- Implement: e_debiased = e - (W^T W) @ e
+- Validate: MI(ancestry; e_debiased) drop
+
+### Exercise 6: Sex Handling (1.5 hours)
+[See debiasing doc Section "3. Sex as Categorical Covariate"]
+- Hemizygous males (0/1), diploid females (0/1/2)
+- Condition on sex, don't remove signal
+
+### Exercise 7: Fairness Matrix (1.5 hours)
+[See debiasing doc Section "VALIDATION FRAMEWORK"]
+- Compute metrics for ancestry × sex
+- Success: All cells within 3-5% of best group
+```
+
+**Deliverables:**
+- ✅ Ancestry PCA embeddings
+- ✅ Stratified data loader
+- ✅ Debiased embeddings
+- ✅ Fairness validation notebook
+
+---
 
 **Hands-On (Week 3: HPO + Phenotype Prediction, 6-8 hours):**
 

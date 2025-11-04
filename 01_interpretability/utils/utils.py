@@ -24,9 +24,100 @@ Note: For plotting and visualization, use the functions in plot_utils.py.
 """
 
 
-from typing import Optional
+from typing import Optional, Literal
 import torch
 import numpy as np
+
+
+def aa_position_to_token_position(
+    aa_pos: int,
+    sequence_length: int,
+    num_tokens: int,
+    sequence_type: Literal["protein", "nucleotide"] = "protein"
+) -> int:
+    """
+    Convert amino acid position to approximate token position in attention matrix.
+
+    Args:
+        aa_pos: 1-indexed amino acid position
+        sequence_length: Length of input sequence (AA for protein, NT for nucleotide)
+        num_tokens: Number of tokens in attention matrix (including special tokens)
+        sequence_type: "protein" or "nucleotide"
+
+    Returns:
+        0-indexed token position (clamped to valid range)
+
+    Examples:
+        # Protein model (ESM-2): Direct mapping
+        >>> aa_position_to_token_position(100, 200, 202, "protein")
+        100  # +1 for CLS token, so token 100 corresponds to AA 99 (0-indexed)
+
+        # Nucleotide model (NT): AA -> NT -> token
+        >>> aa_position_to_token_position(100, 600, 102, "nucleotide")
+        50  # AA 100 -> NT 300 -> token ~50 (300/600 * 102)
+    """
+    if sequence_type == "protein":
+        # Protein models typically have 1 token per AA + special tokens
+        # CLS token at position 0, so AA position i is at token i
+        token_pos = aa_pos  # Assumes CLS at 0, AAs start at 1
+
+    elif sequence_type == "nucleotide":
+        # Convert AA position to nucleotide position
+        nt_pos = (aa_pos - 1) * 3  # 0-indexed NT position
+
+        # Map NT position to token position proportionally
+        # Account for special tokens (e.g., CLS, SEP)
+        # Assume ~2 special tokens (CLS at start, SEP at end)
+        usable_tokens = num_tokens - 2
+        token_pos = int((nt_pos / sequence_length) * usable_tokens) + 1  # +1 for CLS
+
+    else:
+        raise ValueError(f"sequence_type must be 'protein' or 'nucleotide', got '{sequence_type}'")
+
+    # Clamp to valid range [0, num_tokens-1]
+    return max(0, min(token_pos, num_tokens - 1))
+
+
+def detect_sequence_type(
+    sequence: str,
+    tokenizer = None
+) -> Literal["protein", "nucleotide"]:
+    """
+    Detect if a sequence is protein or nucleotide.
+
+    Args:
+        sequence: Input sequence string
+        tokenizer: Optional tokenizer to check model type
+
+    Returns:
+        "protein" or "nucleotide"
+    """
+    # Check tokenizer first if available
+    if tokenizer is not None:
+        tokenizer_name = str(tokenizer.__class__.__name__).lower()
+        if "nucleotide" in tokenizer_name or "dna" in tokenizer_name:
+            return "nucleotide"
+        if "esm" in tokenizer_name or "protein" in tokenizer_name:
+            return "protein"
+
+    # Check sequence characters
+    nucleotide_chars = set("ATCGUN")
+    protein_chars = set("ACDEFGHIKLMNPQRSTVWY")
+
+    seq_upper = sequence.upper()
+    seq_chars = set(seq_upper)
+
+    # If only nucleotide characters, it's nucleotide
+    if seq_chars.issubset(nucleotide_chars):
+        return "nucleotide"
+
+    # If has protein-specific characters, it's protein
+    protein_specific = protein_chars - nucleotide_chars
+    if seq_chars & protein_specific:
+        return "protein"
+
+    # Default to protein (conservative choice)
+    return "protein"
 
 
 def extract_attention(
@@ -130,6 +221,8 @@ def analyze_variant_attention_changes(
     variant_pos: int,
     variant_type: str = "substitution",  # "substitution", "deletion", "insertion"
     window: int = 10,
+    sequence: Optional[str] = None,
+    tokenizer = None,
 ) -> dict:
     """
     Analyze how attention changes around the variant position.
@@ -137,14 +230,39 @@ def analyze_variant_attention_changes(
     Args:
         wt_attn: WT attention [seq_len, seq_len]
         mut_attn: Mutant attention [seq_len, seq_len]
-        variant_pos: 1-indexed variant position
+        variant_pos: 1-indexed amino acid variant position
         variant_type: Type of variant (substitution, deletion, insertion)
         window: Residues around variant to analyze
+        sequence: Optional sequence string for type detection
+        tokenizer: Optional tokenizer for type detection
 
     Returns:
         dict with analysis results
     """
+    # Detect sequence type
+    seq_type = "protein"  # Default
+    if sequence is not None:
+        seq_type = detect_sequence_type(sequence, tokenizer)
+
+    # Convert AA position to token position
+    if seq_type == "nucleotide" and sequence is not None:
+        original_pos = variant_pos
+        variant_pos = aa_position_to_token_position(
+            variant_pos,
+            len(sequence),
+            wt_attn.shape[0],
+            "nucleotide"
+        )
+        print(f"ℹ️  Mapped AA position {original_pos} → token position {variant_pos} (nucleotide model)")
+
     pos = variant_pos - 1  # 0-indexed
+
+    # Bounds check: ensure pos is within attention matrix dimensions
+    max_pos = min(wt_attn.shape[0], mut_attn.shape[0]) - 1
+    if pos > max_pos:
+        print(f"⚠️  Warning: Position {variant_pos} (index {pos}) exceeds attention matrix size ({wt_attn.shape[0]})")
+        print(f"   Using center of sequence instead for analysis.")
+        pos = min(wt_attn.shape[0] // 2, mut_attn.shape[0] // 2)
 
     # Check if shapes match
     if wt_attn.shape != mut_attn.shape:

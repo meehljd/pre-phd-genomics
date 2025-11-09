@@ -5,10 +5,9 @@ channels:
   - bioconda
 dependencies:
   - python=3.10
-  - gsl
   - htslib
   - plink2
-  - bcftools
+  - bcftools #may find missing "libgsl.so.25" or similar.  This is the gls 2.5 library, which can be installed via conda install -c conda-forge gsl
   - tabix
   - vcftools
   - pandas
@@ -20,6 +19,8 @@ dependencies:
   - statsmodels
   - biopython
   - jupyter
+  - google-cloud-sdk
+  - google-cloud-storage
   - pip
   - pip:
     - transformers

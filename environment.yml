@@ -21,7 +21,9 @@ dependencies:
   - jupyter
   - google-cloud-sdk
   - google-cloud-storage
+  - google-cloud-bigquery
   - pip
   - pip:
     - transformers
     - requests
+    - pandas_gbq

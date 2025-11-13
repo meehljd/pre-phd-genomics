@@ -30,3 +30,4 @@ dependencies:
     - requests
     - pandas_gbq
     - hail
+    - onnxruntime

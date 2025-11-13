@@ -208,6 +208,122 @@ where Î» ~ 0.01-0.1 (tuned on validation set)
 
 ---
 
+### Embedding Debiasing & Harmonization (10-12 hours)
+
+**Goal:** Systematic batch correction for Evo2 gene embeddings with quantitative evaluation
+
+#### Batch Correction Methods
+
+**Primary: InMoose (ComBat)** (3-4 hours)
+- Empirical Bayes shrinkage for continuous embeddings
+- Preserves biological covariates (ancestry) via `mod` parameter
+- Reference batch normalization option
+
+```python
+import inmoose.pycombat as pycombat
+
+# Concatenate gene embeddings (20 genes)
+X_all = np.concatenate([gene_embeddings[g] for g in genes], axis=1)
+
+# Apply InMoose correction
+corrected = pycombat.pycombat(
+    pd.DataFrame(X_all.T),
+    batch=metadata['assay_version'],
+    mod=pd.get_dummies(metadata['ancestry']),  # preserve ancestry
+    ref_batch='v3'  # normalize to v3
+)
+```
+
+**Alternative: Harmony** (2-3 hours)
+- Fast, non-parametric correction
+- Comparison baseline for InMoose
+
+```python
+from harmonypy import run_harmony
+
+corrected = run_harmony(
+    X_all,
+    metadata,
+    vars_use=['assay_version'],
+    max_iter_harmony=20
+)
+```
+
+#### Evaluation Metrics (3-4 hours)
+
+**Batch Mixing (Lower = Better)**
+- Silhouette score (batch labels): Quantify batch separation
+- kBET rejection rate: k-nearest neighbor batch effect test  
+- LISI (batch): Local Inverse Simpson's Index
+
+**Biological Preservation (Maintain/Increase)**
+- Silhouette score (ancestry): Verify structure retained
+- LISI (biology): Local diversity of biological labels
+
+```python
+# Example evaluation
+from sklearn.metrics import silhouette_score
+
+batch_sep_before = silhouette_score(X_all, batch)
+batch_sep_after = silhouette_score(X_corrected, batch)
+
+ancestry_sep_before = silhouette_score(X_all, ancestry)
+ancestry_sep_after = silhouette_score(X_corrected, ancestry)
+
+print(f"Batch separation: {batch_sep_before:.3f} → {batch_sep_after:.3f}")
+print(f"Ancestry signal: {ancestry_sep_before:.3f} → {ancestry_sep_after:.3f}")
+```
+
+#### Cross-Batch Validation (2-3 hours)
+
+**Strategy:** Leave-one-batch-out cross-validation
+- Harmonize training batches only
+- Test on held-out batch (uncorrected)
+- Assess generalization to new batches
+
+```python
+# For each batch
+for held_out_batch in unique_batches:
+    train_mask = batch != held_out_batch
+    test_mask = batch == held_out_batch
+    
+    # Correct training only
+    X_train_corrected = inmoose_correct(X_train, batch_train)
+    
+    # Train MLP, test on uncorrected held-out
+    clf.fit(X_train_corrected, y_train)
+    auroc = roc_auc_score(y_test, clf.predict_proba(X_test)[:, 1])
+```
+
+#### Gene-Specific Analysis (2-3 hours)
+
+**Sensitivity Analysis:** Per-gene performance impact
+- Compare uncorrected vs corrected for each of 20 genes
+- Identify genes where correction degrades performance
+- Flag for gene-specific strategies
+
+```python
+for gene in genes:
+    scores_before = cross_val_score(clf, gene_embeddings[gene], y, scoring='roc_auc')
+    scores_after = cross_val_score(clf, corrected_genes[gene], y, scoring='roc_auc')
+    delta = scores_after.mean() - scores_before.mean()
+```
+
+**Success Criteria:**
+- Batch silhouette reduction >50%
+- Ancestry silhouette maintained within 10%
+- Cross-batch AUROC >0.70
+- <3 genes with Δ AUROC < -0.02
+
+**Deliverables:**
+- ✅ Corrected embeddings (20 T1D genes)
+- ✅ Metrics report (before/after)
+- ✅ Cross-batch validation results
+- ✅ Per-gene sensitivity analysis + visualization
+- ✅ Method comparison (uncorrected, InMoose, Harmony)
+
+---
+
 **Hands-On (Week 3: HPO + Phenotype Prediction, 6-8 hours):**
 
 ```python
@@ -426,8 +542,9 @@ where Î» ~ 0.01-0.1 (tuned on validation set)
 ### Track B Summary (By Apr 30, 2026):
 - ✅ Fluent in ACMG classification
 - ✅ Understand ancestry confounding and mitigation strategies
+- ✅ Embedding debiasing pipeline with InMoose/Harmony
 - ✅ Genomic foundation model selected and validated
 - ✅ Can build network-based gene prioritization systems
 - ✅ Understand Mayo clinical workflows
 - ✅ Ready to design Aim 1 retrospective validation
-- **Time investment: ~105-130 hours** (expanded from 100-120)
+- **Time investment: ~115-142 hours** (expanded from 105-130 to include embedding debiasing)

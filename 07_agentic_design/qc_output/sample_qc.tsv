@@ -1,0 +1,4 @@
+#FID	IID	MISSING_CT	OBS_CT	F_MISS	fail_missing	qc_pass
+0	NA12878	0	9705	0	False	True
+0	NA12889	0	9705	0	False	True
+0	NA12890	0	9705	0	False	True

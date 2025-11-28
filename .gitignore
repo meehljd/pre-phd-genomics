@@ -1,5 +1,5 @@
 figures/
-
+*.png
 
 
 .ipynb_checkpoints/

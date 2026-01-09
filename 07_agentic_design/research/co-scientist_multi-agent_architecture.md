@@ -1,4 +1,4 @@
-c# Multi-Agent Co-Scientist Architecture for Mayo Clinic
+# Multi-Agent Co-Scientist Architecture for Mayo Clinic
 
 ## System architecture: GCP-native multi-agent research platform
 

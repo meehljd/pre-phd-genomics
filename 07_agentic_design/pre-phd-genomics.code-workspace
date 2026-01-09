@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../genomic-foundation-platform"
+		}
+	],
+	"settings": {
+		"python-envs.defaultEnvManager": "ms-python.python:venv",
+		"python-envs.defaultPackageManager": "ms-python.python:pip"
+	}
+}

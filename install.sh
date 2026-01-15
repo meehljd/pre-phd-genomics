@@ -19,7 +19,7 @@ conda env update -f environment.yml
 # Activate environment
 echo "🌟 Activating conda environment..."
 eval "$(conda shell.bash hook)"
-conda activate pre-phd-genomics
+conda activate gfm-discovery
 
 # Install PyTorch with CUDA
 echo "🔥 Installing PyTorch with CUDA support..."

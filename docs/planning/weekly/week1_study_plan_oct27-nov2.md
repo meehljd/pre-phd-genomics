@@ -38,7 +38,7 @@
 **What to do:**
 1. **Create GitHub repo structure (20 min)**
    ```bash
-   git init pre-phd-genomics
+   git init gfm-discovery
    # Create directories:
    # 01_interpretability/
    # 02_genomics_domain/

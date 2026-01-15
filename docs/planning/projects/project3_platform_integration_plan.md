@@ -10,7 +10,7 @@
 
 ### Platform Structure
 
-The genomic-foundation-platform follows a four-layer modular architecture:
+The gfm-platform follows a four-layer modular architecture:
 
 ```
 ┌─────────────────────────────────┐
@@ -59,7 +59,7 @@ class HeterogeneousGNNAggregator(Aggregator):
 ## 2. User Decisions
 
 ### Build Location
-**Decision:** Build in `genomic-foundation-platform` (not pre-phd-genomics sandbox)
+**Decision:** Build in `gfm-platform` (not gfm-discovery sandbox)
 
 **Rationale:**
 - Production-quality codebase for thesis
@@ -96,7 +96,7 @@ class HeterogeneousGNNAggregator(Aggregator):
 
 ```bash
 # Create feature branch
-cd /root/genomic-foundation-platform
+cd /root/gfm-platform
 git checkout -b feature/hetgnn-aggregator
 ```
 
@@ -199,7 +199,7 @@ class GNNInterpreter:
 ## 4. File Structure (Final State)
 
 ```
-genomic-foundation-platform/
+gfm-platform/
 ├── docs/ADR/
 │   └── ADR-032-heterogeneous-gnn-aggregator.md   # NEW
 ├── gfm_tasks/gfm_tasks/
@@ -267,7 +267,7 @@ networkx = ">=3.0"
 Execute Project 3 HetGNN platform integration:
 
 1. SETUP
-   - cd /root/genomic-foundation-platform
+   - cd /root/gfm-platform
    - git checkout -b feature/hetgnn-aggregator
 
 2. ADR
@@ -298,10 +298,10 @@ Execute Project 3 HetGNN platform integration:
    - Ready for PR review
 
 Context files:
-- /root/pre-phd-genomics/docs/planning/projects/project3_implementation_plan.md
-- /root/pre-phd-genomics/docs/planning/projects/project3_platform_integration_plan.md
-- /root/genomic-foundation-platform/docs/ADR/ADR-012-task-layer.md
-- /root/genomic-foundation-platform/gfm_tasks/gfm_tasks/base.py
+- /root/gfm-discovery/docs/planning/projects/project3_implementation_plan.md
+- /root/gfm-discovery/docs/planning/projects/project3_platform_integration_plan.md
+- /root/gfm-platform/docs/ADR/ADR-012-task-layer.md
+- /root/gfm-platform/gfm_tasks/gfm_tasks/base.py
 ```
 
 ---

@@ -1,4 +1,4 @@
-# pre-phd-genomics
+# gfm-discovery
 repo to do phd prep and analysis
 
 
@@ -8,7 +8,7 @@ repo to do phd prep and analysis
 
    ```bash
    git clone <repository_url>
-   cd pre-phd-genomics
+   cd gfm-discovery
    ./install.sh
    ```
 ## Git Workflow (Mayo GCP VM → Laptop → GitHub)
@@ -18,11 +18,11 @@ Mayo's GCP VM blocks git push to GitHub. Use laptop as intermediary:
 ### One-time setup (on laptop):
 ```bash
 # Clone from GitHub
-git clone https://github.com/meehljd/pre-phd-genomics.git
-cd pre-phd-genomics
+git clone https://github.com/meehljd/gfm-discovery.git
+cd gfm-discovery
 
 # Add VM as remote
-git remote add mayo ext_meehl_joshua_mayo_edu@a3-3tb-disk:~/pre-phd-genomics
+git remote add mayo ext_meehl_joshua_mayo_edu@a3-3tb-disk:~/gfm-discovery
 ```
 
 ### Regular workflow:

@@ -16,7 +16,7 @@
 #==============================================================================
 
 # Working directory
-cd /home/ext_meehl_joshua_mayo_edu/pre-phd-genomics/02_genomics_domain
+cd /home/ext_meehl_joshua_mayo_edu/gfm-discovery/02_genomics_domain
 
 #------------------------------------------------------------------------------
 # PARAMETERS

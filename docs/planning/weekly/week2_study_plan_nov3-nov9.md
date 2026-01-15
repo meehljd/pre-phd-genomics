@@ -42,7 +42,7 @@
 
 1. **Set up directory structure (10 min)**
    ```bash
-   cd ~/pre-phd-genomics
+   cd ~/gfm-discovery
    mkdir -p 02_debiasing/{data,notebooks,scripts,figures,docs}
    mkdir -p 02_debiasing/data/ld_matrices
    
@@ -300,7 +300,7 @@
    
    **Run script:**
    ```bash
-   cd ~/pre-phd-genomics
+   cd ~/gfm-discovery
    python 02_debiasing/scripts/ld_prune_union.py
    ```
 
@@ -970,7 +970,7 @@ print("\nValidation results saved!")
 
 3. **Git commit and push (15 min)**
    ```bash
-   cd ~/pre-phd-genomics
+   cd ~/gfm-discovery
    
    # Stage all Week 2 work
    git add 02_debiasing/

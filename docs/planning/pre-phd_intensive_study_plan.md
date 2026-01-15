@@ -112,7 +112,7 @@
 ## GitHub Repository Structure
 
 ```
-pre-phd-genomics/
+gfm-discovery/
 ├── README.md
 ├── requirements.txt
 ├── setup.sh

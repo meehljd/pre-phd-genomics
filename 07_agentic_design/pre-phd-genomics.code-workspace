@@ -4,7 +4,7 @@
 			"path": ".."
 		},
 		{
-			"path": "../../genomic-foundation-platform"
+			"path": "../../gfm-platform"
 		}
 	],
 	"settings": {

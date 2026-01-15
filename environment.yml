@@ -1,11 +1,11 @@
-name: pre-phd-genomics
+name: gfm-discovery
 channels:
   - defaults
   - conda-forge
   - bioconda
 dependencies:
   - python=3.10
-  - openjdk=11 
+  - openjdk=11
   - htslib
   - plink2
   - bcftools #may find missing "libgsl.so.25" or similar.  This is the gls 2.5 library, which can be installed via conda install -c conda-forge gsl
@@ -26,8 +26,8 @@ dependencies:
   - wget
   - pip
   - pip:
-    - transformers
-    - requests
-    - pandas_gbq
-    - hail
-    - onnxruntime
+      - transformers
+      - requests
+      - pandas_gbq
+      - hail
+      - onnxruntime

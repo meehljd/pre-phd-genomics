@@ -471,7 +471,7 @@ Apr 2026
 ## Appendix A: Directory Structure
 
 ```
-pre-phd-genomics/
+gfm-discovery/
 ├── 03_network_medicine/
 │   └── project3_hetgnn/
 │       ├── README.md

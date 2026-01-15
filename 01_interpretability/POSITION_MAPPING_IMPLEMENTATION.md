@@ -227,7 +227,7 @@ print(seq_type)  # "nucleotide"
 
 Run the notebook on all variants to verify:
 ```bash
-cd /root/pre-phd-genomics/01_interpretability
+cd /root/gfm-discovery/01_interpretability
 jupyter notebook 02_nt_attention_analysis.ipynb
 ```
 

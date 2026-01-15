@@ -1,0 +1,32 @@
+# Paper Reading List for Pre-PhD Genomics Research
+# Manage papers to read, in progress, and completed
+
+metadata:
+  created: "2026-01-09"
+  last_updated: "2026-01-09"
+  version: 1
+
+papers: []
+
+# Paper status flow: to_read -> reading -> summarized -> reviewed
+
+# Example paper entry:
+# - id: "paper-20260109-001"
+#   title: "DeepRare: Multi-Agent Framework for Rare Disease Diagnosis"
+#   authors: "Smith et al."
+#   venue: "Nature Methods"
+#   date: "2025-06"
+#   url: "https://example.com/paper"
+#   doi: "10.1038/xxx"
+#
+#   added: "2026-01-09"
+#   status: "to_read"
+#   priority: "high"
+#
+#   relevance: "Direct competitor - multi-agent architecture for rare disease"
+#   track: "C"
+#
+#   summary_file: null  # Will be set when summarized
+#   notes: "Recommended by Eric Klee"
+#
+#   tags: ["competitor", "multi-agent", "rare-disease"]

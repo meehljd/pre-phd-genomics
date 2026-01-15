@@ -1,0 +1,87 @@
+# Data Configuration for Project 3: Patient-Scale HetGNN
+
+# Network database sources
+networks:
+  string:
+    url: "https://stringdb-downloads.org/download/protein.links.v12.0/9606.protein.links.v12.0.txt.gz"
+    min_score: 700  # High confidence only
+    output: "data/networks/string_human_700.parquet"
+
+  reactome:
+    url: "https://reactome.org/download/current/NCBI2Reactome_All_Levels.txt"
+    species: "Homo sapiens"
+    output: "data/networks/reactome_genes.parquet"
+
+  encode:
+    # TF-target relationships from ENCODE ChIP-seq
+    source: "ENCODE portal API"
+    output: "data/networks/encode_tf_targets.parquet"
+
+  gtex:
+    # Top 1% co-expression correlations
+    version: "v8"
+    correlation_threshold: 0.7  # Pearson r
+    output: "data/networks/gtex_coexpr.parquet"
+
+# Patient data sources
+patients:
+  clinvar:
+    url: "https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/clinvar.vcf.gz"
+    filter_significance: ["Pathogenic", "Likely pathogenic"]
+    output: "data/patients/clinvar_pathogenic.vcf"
+
+  hpo:
+    url: "http://purl.obolibrary.org/obo/hp.obo"
+    output: "data/patients/hpo_ontology.obo"
+
+# Graph construction parameters
+graph:
+  k_hops: 2  # Expand to 2-hop neighbors
+  max_nodes: 100  # Maximum genes per patient graph
+  min_nodes: 10  # Minimum genes per patient graph
+
+  edge_types:
+    - ppi           # Protein-protein interaction
+    - regulatory    # TF-target regulation
+    - pathway       # Shared pathway membership
+    - coexpression  # Co-expression correlation
+
+# Node feature configuration
+node_features:
+  pathogenicity:
+    sources: ["CADD", "AlphaMissense"]
+    dim: 2
+
+  expression:
+    source: "GTEx"
+    tissues: "all"  # or list of specific tissues
+    use_pca: true
+    pca_dims: 10
+
+  conservation:
+    sources: ["PhyloP", "PhastCons"]
+    dim: 2
+
+  constraint:
+    sources: ["gnomAD_pLI", "gnomAD_LOEUF"]
+    dim: 2
+
+  network:
+    metrics: ["degree", "betweenness", "pagerank", "clustering"]
+    dim: 4
+
+# Ancestry configuration
+ancestry:
+  reference: "1000_genomes"
+  n_pcs: 10  # Principal components to compute
+  stratification:
+    method: "decile"  # Stratify by PC1-PC2 deciles
+    min_group_size: 20
+
+# Data splits
+splits:
+  train: 0.7
+  val: 0.15
+  test: 0.15
+  stratify_by: ["ancestry_group", "disease_category"]
+  random_seed: 42

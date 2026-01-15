@@ -1,0 +1,88 @@
+# Model Configuration for Project 3: Patient-Scale HetGNN
+
+# Model selection
+model:
+  name: "han"  # Options: "rgcn", "han", "simple_gcn"
+
+# R-GCN configuration
+rgcn:
+  hidden_dims: [64, 64]
+  num_layers: 2
+  num_bases: 4  # Basis decomposition for parameter efficiency
+  dropout: 0.3
+  activation: "relu"
+
+# HAN (Heterogeneous Attention Network) configuration
+han:
+  hidden_dim: 64
+  num_heads: 8
+  num_layers: 2
+  dropout: 0.3
+  negative_slope: 0.2  # LeakyReLU slope
+
+# Simple GCN baseline configuration
+simple_gcn:
+  hidden_dims: [64, 64]
+  num_layers: 2
+  dropout: 0.3
+
+# Graph pooling
+pooling:
+  method: "mean"  # Options: "mean", "max", "attention", "set2set"
+  attention_heads: 4  # If using attention pooling
+
+# Classification head
+classifier:
+  hidden_dims: [128, 64]
+  dropout: 0.4
+  num_classes: null  # Set from data
+
+# Training configuration
+training:
+  epochs: 200
+  batch_size: 32
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  scheduler:
+    type: "reduce_on_plateau"
+    patience: 10
+    factor: 0.5
+  early_stopping:
+    patience: 20
+    min_delta: 0.001
+
+# Ancestry robustness configuration
+fairness:
+  use_group_dro: true
+  group_dro:
+    eta: 0.1  # Step size for group weights
+    adj_scale: 1.0  # Adjustment scale
+
+  stratified_sampling: true
+  stratify_by: "ancestry_decile"
+
+  # Regularization to prevent ancestry-predictive embeddings
+  adversarial_debiasing: false  # Optional: gradient reversal
+  adversarial_weight: 0.1
+
+# Evaluation metrics
+evaluation:
+  metrics:
+    - auroc
+    - auprc
+    - accuracy
+    - top_k_recall  # k=5
+  fairness_metrics:
+    - group_auroc
+    - fairness_gap
+    - equalized_odds
+
+# Experiment tracking
+wandb:
+  project: "project3-hetgnn"
+  entity: null  # Your W&B username
+  log_freq: 10
+
+# Reproducibility
+seed: 42
+deterministic: true

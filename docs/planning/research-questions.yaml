@@ -1,0 +1,50 @@
+# Research Questions Log for Pre-PhD Genomics Research
+# Track research questions as they develop
+
+metadata:
+  created: "2026-01-09"
+  last_updated: "2026-01-09"
+  version: 1
+
+questions: []
+
+# Question status: exploring | active | parked | answered
+
+# Example question entry:
+# - id: "rq-20260109-001"
+#   question: "Can network topology features improve variant pathogenicity prediction beyond sequence-only models?"
+#
+#   status: "exploring"
+#   track: "B"
+#
+#   decomposition:
+#     hypothesis: "Variants affecting network hub genes have different pathogenicity patterns than peripheral genes"
+#     assumptions:
+#       - "PPI network structure captures functional importance"
+#       - "Hub genes are more constrained evolutionarily"
+#     variables:
+#       independent: ["network centrality", "degree", "betweenness"]
+#       dependent: ["pathogenicity score", "clinical significance"]
+#       confounds: ["gene length", "expression level", "evolutionary conservation"]
+#
+#   literature:
+#     papers_found: 5
+#     current_state: "Network medicine shows promise but limited integration with foundation models"
+#     gaps:
+#       - "No systematic comparison of network features with sequence embeddings"
+#       - "Limited ancestry-stratified evaluation"
+#
+#   feasibility:
+#     data: "STRING PPI, ClinVar variants, gnomAD frequencies"
+#     methods: "Network propagation, GFM embeddings, logistic regression"
+#     time_estimate: "20 hours"
+#     risks:
+#       - "Network incompleteness may limit signal"
+#
+#   phd_fit:
+#     aim_alignment: "Aim 1 - network-aware variant ranking"
+#     novelty: "medium"
+#     publication_potential: "Strong if network features add to GFM performance"
+#
+#   added: "2026-01-09"
+#   updated: "2026-01-09"

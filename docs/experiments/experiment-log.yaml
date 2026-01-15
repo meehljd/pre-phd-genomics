@@ -1,0 +1,42 @@
+# Experiment Log for Pre-PhD Genomics Research
+# Track experiments across Track A (Interpretability), B (Genomics/Network), C (Competitive/Clinical)
+
+metadata:
+  created: "2026-01-09"
+  last_updated: "2026-01-09"
+  version: 1
+
+experiments: []
+
+# Example experiment entry:
+# - id: "exp-20260109-001"
+#   name: "ESM2 Attention Visualization on TP53 Variants"
+#   track: "A"
+#   phase: "A1"
+#
+#   hypothesis: "Attention patterns in ESM2 will highlight structurally important residues around variant positions"
+#
+#   setup:
+#     notebook: "01_interpretability/attention_visualization_esm2.ipynb"
+#     data: "TP53 variants from ClinVar"
+#     model: "ESM2-650M"
+#     parameters:
+#       layer: 33
+#       head_aggregation: "mean"
+#
+#   results:
+#     metrics:
+#       attention_entropy: 0.85
+#     observations: "Attention concentrates on variant position and surrounding hydrophobic residues"
+#     figures: ["01_interpretability/figs/tp53_attention_heatmap.png"]
+#
+#   status: "completed"
+#   started: "2026-01-09"
+#   completed: "2026-01-09"
+#
+#   conclusions: "ESM2 attention is sensitive to variant context, promising for interpretability"
+#   next_steps:
+#     - "Compare with DNABERT-2 attention patterns"
+#     - "Test on pathogenic vs benign variants"
+#
+#   tags: ["interpretability", "esm2", "attention", "tp53"]
